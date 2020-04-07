@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "connection": "default",
+  "collectionName": "products",
+  "info": {
+    "name": "product"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "name_en": {
+      "type": "string"
+    },
+    "desc": {
+      "type": "string"
+    },
+    "desc_en": {
+      "type": "string"
+    },
+    "images": {
+      "collection": "file",
+      "via": "related",
+      "plugin": "upload",
+      "required": false
+    },
+    "startTime": {
+      "type": "datetime"
+    },
+    "duration": {
+      "type": "integer"
+    },
+    "timeStep": {
+      "type": "integer"
+    },
+    "basePrice": {
+      "type": "integer"
+    },
+    "priceStep": {
+      "type": "integer"
+    },
+    "seller": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seller.seller",
+      "required": true
+    },
+    "types": {
+      "type": "dynamiczone",
+      "components": [
+        "type.type"
+      ],
+      "max": 3,
+      "required": true,
+      "min": 1
+    }
+  }
+}

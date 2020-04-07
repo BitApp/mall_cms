@@ -1,0 +1,23 @@
+{
+  "connection": "default",
+  "collectionName": "components_seller_sellers",
+  "info": {
+    "name": "seller",
+    "icon": "address-book"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "mobile": {
+      "type": "string"
+    },
+    "wechat": {
+      "type": "string"
+    },
+    "iostAccount": {
+      "type": "string"
+    }
+  }
+}

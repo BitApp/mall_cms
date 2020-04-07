@@ -1,0 +1,26 @@
+{
+  "connection": "default",
+  "collectionName": "components_type_types",
+  "info": {
+    "name": "type",
+    "icon": "th-large"
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "electronic",
+        "digital",
+        "art",
+        "makeup",
+        "dress",
+        "bag",
+        "import",
+        "book",
+        "knowledge",
+        "others"
+      ]
+    }
+  }
+}
