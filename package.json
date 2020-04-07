@@ -8,6 +8,7 @@
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
+    "pm2": "pm2 startOrRestart ecosystem.json --env production",
     "postinstall": "patch-package"
   },
   "devDependencies": {},

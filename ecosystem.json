@@ -1,0 +1,24 @@
+{
+  "apps" : [
+    {
+      "name"      : "auction-cms",
+      "script"    : "strapi",
+      "args"      : "start",   
+      "instances" : 0,
+      "exec_mode" : "cluster",
+      "watch"     : false,
+      "error_file": "logs/aution-cms.stderr.log",
+      "out_file"  : "logs/aution-cms.stdout.log",
+      "mergeLogs" : false,
+      "env": {
+        "NODE_ENV": "dev"
+      },
+      "env_production" : {
+        "NODE_ENV": "production"
+      },
+      "env_pre" : {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

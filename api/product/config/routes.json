@@ -2,7 +2,7 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/products",
+      "path": "/api/products",
       "handler": "product.find",
       "config": {
         "policies": []
@@ -10,7 +10,7 @@
     },
     {
       "method": "GET",
-      "path": "/products/count",
+      "path": "/api/products/count",
       "handler": "product.count",
       "config": {
         "policies": []
@@ -18,7 +18,7 @@
     },
     {
       "method": "GET",
-      "path": "/products/:id",
+      "path": "/api/products/:id",
       "handler": "product.findOne",
       "config": {
         "policies": []
@@ -26,7 +26,7 @@
     },
     {
       "method": "POST",
-      "path": "/products",
+      "path": "/api/products",
       "handler": "product.create",
       "config": {
         "policies": []
@@ -34,7 +34,7 @@
     },
     {
       "method": "PUT",
-      "path": "/products/:id",
+      "path": "/api/products/:id",
       "handler": "product.update",
       "config": {
         "policies": []
@@ -42,7 +42,7 @@
     },
     {
       "method": "DELETE",
-      "path": "/products/:id",
+      "path": "/api/products/:id",
       "handler": "product.delete",
       "config": {
         "policies": []

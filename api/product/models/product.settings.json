@@ -57,6 +57,21 @@
       "max": 3,
       "required": true,
       "min": 1
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "offline",
+        "waiting",
+        "bidding",
+        "failed",
+        "success",
+        "payment",
+        "closed",
+        "received"
+      ],
+      "default": "offline",
+      "required": true
     }
   }
 }
