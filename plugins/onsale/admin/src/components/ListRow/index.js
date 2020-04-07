@@ -27,7 +27,9 @@ class ListRow extends React.Component {
           <b>{this.props.item.name}</b>
         </div>
         <div className="col-md-2">
-          <img width="35" src={this.props.item.image.url}/>
+          {this.props.item.images.map(item => {
+            return <img width="35" src={item.url}/>
+          })}
         </div>
         <div className="col-md-5">{this.props.item.desc}</div>
         <div className="col-md-2">

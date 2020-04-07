@@ -10,7 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 const CustomRow = ({ row }) => {
-  const { name, desc, image, status, startTime, onSale } = row;
+  const { name, desc, images, status, startTime, onSale } = row;
   return (
     <tr>
       <td>
@@ -20,7 +20,11 @@ const CustomRow = ({ row }) => {
         <p>{desc}</p>
       </td>
       <td>
-        <p><img width="35" src={image?image.url:''}/></p>
+        <p>
+          {images.map(item => {
+            return <img width="35" src={item.url}/>
+          })}
+        </p>
       </td>
       <td>
         <p>{status}</p>
