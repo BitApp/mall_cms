@@ -31,7 +31,7 @@ class ListRow extends React.Component {
             return <img width="35" src={item.url}/>
           })}
         </div>
-        <div className="col-md-5">{this.props.item.desc}</div>
+        <div className="col-md-5" style={{ maxWidth: '100px' }}>{this.props.item.desc}</div>
         <div className="col-md-2">
           <ButtonWrapper value={this.props.item.status}>
             <Button

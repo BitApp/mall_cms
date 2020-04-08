@@ -16,8 +16,8 @@ const CustomRow = ({ row }) => {
       <td>
         <p>{name}</p>
       </td>
-      <td>
-        <p>{desc}</p>
+      <td style={{ maxWidth: '140px' }}>
+        <p title={desc}>{desc}</p>
       </td>
       <td>
         <p>

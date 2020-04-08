@@ -14,7 +14,8 @@
         "NODE_ENV": "dev"
       },
       "env_production" : {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "DATABASE_NAME": "auction"
       },
       "env_pre" : {
         "NODE_ENV": "production"
