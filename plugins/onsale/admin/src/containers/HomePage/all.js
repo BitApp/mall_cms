@@ -19,17 +19,40 @@ import ProductTable from '../../components/Table';
 import Wrapper from './Wrapper';
 import {  CONTRACT_ADDRESS } from './constants';
 import {
+  PageFooter,
+} from 'strapi-helper-plugin';
+import {
   findProducts,
   onSale
 } from './actions'
 
-export class HomePage extends React.Component {
+export class All extends React.Component {
   componentDidMount() {
-    this.props.findProducts()
+    this.props.findProducts({
+      _sort: "startTime:DESC",
+      _start: this._limit * (this._page - 1),
+      _limit: this._limit
+    })
     this.initIwallet()
   }
 
+  headerNavLinks = [
+    {
+      name: '未上架',
+      to: `/plugins/${pluginId}/offline`,
+    },
+    {
+      name: '已成交',
+      to: `/plugins/${pluginId}/deal`,
+    },
+    {
+      name: '全部',
+      to: `/plugins/${pluginId}/all`,
+    }
+  ];
   walletAccount = '';
+  _page = 1;
+  _limit = 10;
 
   render () {
     const { products } = this.props;
@@ -52,12 +75,15 @@ export class HomePage extends React.Component {
             links={this.headerNavLinks}
             style={{ marginTop: '4.6rem' }}
           />
-          {/* <List
-            data={products}
-            onSale={this.onSale}
-            showLoaders={this.showLoaders()}
-          /> */}
           <ProductTable data={products} onSale={this.onSale} showLoaders={this.showLoaders()}/>
+          <div className="col-md-12">
+            <PageFooter
+              count={ this.props.count }
+              context={{ emitEvent: () => {} }}
+              onChangeParams={this.handleChangeParams}
+              params={{_page: this._page, _limit: this._limit}}
+            />
+          </div>
         </HomePageContextProvider>
       </Wrapper>
     );
@@ -66,6 +92,20 @@ export class HomePage extends React.Component {
   showLoaders = () => {
     const { loading } = this.props
     return loading
+  }
+
+  handleChangeParams = (e) => {
+    if(e.target.name === 'params._limit'){
+      this._limit = e.target.value;
+    } else if(e.target.name === 'params._page') {
+      this._page = e.target.value;
+    }
+
+    this.props.findProducts({
+      _sort: "startTime:DESC",
+      _start: this._limit * (this._page - 1),
+      _limit: this._limit
+    });
   }
 
   onSale = (item) => {
@@ -91,11 +131,15 @@ export class HomePage extends React.Component {
     .on('success', (result) => {
       // _this.props.onSale(item, value)
       strapi.notification.success(item.name + "上链成功");
-      findProducts();
+      findProducts({
+        _sort: "startTime:DESC",
+        _start: this._limit * (this._page - 1),
+        _limit: this._limit
+      });
     })
     .on('failed', (failed) => {
       // _this.props.onSale(item, value)
-      strapi.notification.error(failed.message.split('throw')[1] || failed);
+      strapi.notification.error((failed.message ? failed.message.split('throw')[1] : failed.message) || failed);
     })
   }
 
@@ -152,4 +196,4 @@ export default memo(compose(
   withReducer,
   withSaga,
   withConnect
-)(injectIntl(HomePage)));
+)(injectIntl(All)));

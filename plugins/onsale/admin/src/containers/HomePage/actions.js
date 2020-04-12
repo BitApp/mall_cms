@@ -26,10 +26,11 @@ export function findProductsError(errorMessage) {
   };
 }
 
-export function findProductsSucceed(products) {
+export function findProductsSucceed(products, count) {
   return {
     type: FIND_PRODUCTS_SUCCEED,
     products,
+    count
   };
 }
 

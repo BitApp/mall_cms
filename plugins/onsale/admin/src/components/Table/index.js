@@ -21,8 +21,8 @@ const CustomRow = ({ row }) => {
       </td>
       <td>
         <p>
-          {images.map(item => {
-            return <img width="35" src={item.url}/>
+          {images.map((item, index) => {
+            return <img key={index} width="35" src={item.url}/>
           })}
         </p>
       </td>

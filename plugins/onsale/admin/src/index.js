@@ -21,11 +21,12 @@ export default strapi => {
     layout: null,
     lifecycles,
     leftMenuLinks: [],
+    suffixUrl: () => '/offline',
     leftMenuSections: [],
     mainComponent: App,
     name: pluginPkg.strapi.name,
     preventComponentRendering: false,
-    trads,
+    trads
   };
 
   return strapi.registerPlugin(plugin);

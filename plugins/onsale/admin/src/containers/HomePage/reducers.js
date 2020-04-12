@@ -3,6 +3,7 @@ import { fromJS, List } from 'immutable';
 
 const initialState = fromJS({
   products: List([]),
+  count: 0,
   error: false,
   errorMessage: '',
   loading: true,
@@ -23,6 +24,7 @@ function onSaleReducer(state = initialState, action) {
   } else if (action.type === FIND_PRODUCTS_SUCCEED) {
     return state
       .set('products', List(action.products))
+      .set('count', action.count)
       .set('error', false)
       .set('errorMessage', '')
       .set('loading', false);

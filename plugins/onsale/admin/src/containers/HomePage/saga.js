@@ -1,4 +1,3 @@
-import IOST from 'iost'
 import { takeLatest, takeEvery, put, fork, call, take, cancel } from 'redux-saga/effects';
 import { request } from 'strapi-helper-plugin';
 import { findProductsSucceed, findProductsError, onSaleSucceed, onSaleError } from './actions';
@@ -7,14 +6,26 @@ import { BASE_URL, FIND_PRODUCTS, ON_SALE } from './constants';
 
 export function* findProducts(action) {
   try {
-    const requestUrl = `${BASE_URL}/products${action.params||''}`;
+    let paramString = "";
+    if(action.params) {
+      paramString = "?" + (Object.keys(action.params).map((item, index) => {
+        if(index > 0){
+          return "&" + item + "=" +action.params[item]
+        } else {
+          return item + "=" +action.params[item]
+        }
+      }).join(""))
+    }
+    const requestUrl = `${BASE_URL}/products${paramString}`;
+    const countRequestUrl = `${BASE_URL}/products/count${paramString}`;
     const opts = {
       method: 'GET'
     };
     // Fetch data
     const response = yield call(request, requestUrl, opts);
+    const countResponse = yield call(request, countRequestUrl, opts);
     // Pass the response to the reducer
-    yield put(findProductsSucceed(response));
+    yield put(findProductsSucceed(response, countResponse));
   } catch (error) {
     yield put(findProductsError(error));
   }
