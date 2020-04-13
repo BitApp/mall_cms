@@ -54,9 +54,8 @@ export function* defaultSaga() {
   // Listen to DATA_FETCH event
   yield takeEvery(FIND_PRODUCTS, findProducts);
   yield takeEvery(ON_SALE, onSale);
-  // // Cancel watcher
+  // Cancel watcher
   // yield take(LOCATION_CHANGE);
-
   // yield cancel(fetchDataWatcher);
 }
 

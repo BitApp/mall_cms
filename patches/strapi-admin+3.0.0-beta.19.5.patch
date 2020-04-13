@@ -1,0 +1,13 @@
+diff --git a/node_modules/strapi-admin/admin/src/utils/sagaInjectors.js b/node_modules/strapi-admin/admin/src/utils/sagaInjectors.js
+index 69c5a87..918e54b 100644
+--- a/node_modules/strapi-admin/admin/src/utils/sagaInjectors.js
++++ b/node_modules/strapi-admin/admin/src/utils/sagaInjectors.js
+@@ -73,7 +73,7 @@ export function ejectSagaFactory(store, isValid) {
+     if (Reflect.has(store.injectedSagas, key)) {
+       const descriptor = store.injectedSagas[key];
+       if (descriptor.mode !== DAEMON) {
+-        descriptor.task.cancel();
++        descriptor.task && descriptor.task.cancel();
+         // Clean up in production; in development we need `descriptor.saga` for hot reloading
+         if (process.env.NODE_ENV === 'production') {
+           // Need some value to be able to detect `ONCE_TILL_UNMOUNT` sagas in `injectSaga`
