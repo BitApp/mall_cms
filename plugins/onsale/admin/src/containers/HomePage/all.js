@@ -39,7 +39,7 @@ export class All extends React.Component {
 
   headerNavLinks = [
     {
-      name: '未上架',
+      name: '未上链',
       to: `/plugins/${pluginId}/offline`,
     },
     {
