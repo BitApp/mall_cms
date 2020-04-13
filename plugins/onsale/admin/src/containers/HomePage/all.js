@@ -10,6 +10,7 @@ import { bindActionCreators, compose } from 'redux'
 import pluginId from '../../pluginId';
 import reducer from './reducers';
 import saga from './saga';
+import IOST from 'iost';
 import selectHomePage from './selectors';
 import { Header } from '@buffetjs/custom';
 import { GlobalContext, HeaderNav } from 'strapi-helper-plugin';
