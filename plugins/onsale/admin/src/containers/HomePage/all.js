@@ -19,6 +19,7 @@ import { HomePageContextProvider } from '../../contexts/HomePage';
 import ProductTable from '../../components/Table';
 import Wrapper from './Wrapper';
 import {  CONTRACT_ADDRESS } from './constants';
+import { chainErrorMessage } from '../../utils/helper';
 import {
   PageFooter,
 } from 'strapi-helper-plugin';
@@ -140,7 +141,7 @@ export class All extends React.Component {
     })
     .on('failed', (failed) => {
       // _this.props.onSale(item, value)
-      strapi.notification.error((failed.message ? failed.message.split('throw')[1] : failed.message) || failed);
+      strapi.notification.error(chainErrorMessage(failed));
     })
   }
 

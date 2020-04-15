@@ -144,7 +144,7 @@ export class Deal extends React.Component {
     })
     .on('failed', (failed) => {
       // _this.props.onSale(item, value)
-      strapi.notification.error((failed.message ? failed.message.split('throw')[1] : failed.message) || failed);
+      strapi.notification.error(chainErrorMessage(failed));
     })
   }
 
