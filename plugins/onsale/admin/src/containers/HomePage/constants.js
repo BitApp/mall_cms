@@ -8,5 +8,5 @@ export const ON_SALE_SUCCEED = `MyPlugin/${pluginId}/ON_SALE_SUCCEED`
 export const ON_SALE_ERROR = `MyPlugin/${pluginId}/ON_SALE_ERROR`
 
 export const BASE_URL = '/api'
-export const CONTRACT_ADDRESS = 'ContractGLdxhDjsBcSSLsMem7tumu8Ah4FYmkzSLc9epJ88fpPp'
+export const CONTRACT_ADDRESS = 'ContractCnVcjzfbxmPVi9DhLyrG2KTc1vknTp8bhmtkVrJ1354Y'
 export const CONTRACT_ENDPOINT = 'https://www.iostabc.com/endpoint'
