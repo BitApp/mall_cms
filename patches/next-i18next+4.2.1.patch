@@ -1,0 +1,14 @@
+diff --git a/node_modules/next-i18next/dist/commonjs/create-i18next-client.js b/node_modules/next-i18next/dist/commonjs/create-i18next-client.js
+index 46e31a5..e91dc0e 100644
+--- a/node_modules/next-i18next/dist/commonjs/create-i18next-client.js
++++ b/node_modules/next-i18next/dist/commonjs/create-i18next-client.js
+@@ -25,7 +25,8 @@ var _default = function _default(config) {
+   if (!_i18next["default"].isInitialized) {
+     if (_detectNode["default"]) {
+       var i18nextNodeBackend = eval("require('i18next-node-fs-backend')");
+-      var i18nextMiddleware = eval("require('i18next-express-middleware')");
++      var i18nextMiddleware = eval("require('koa-i18next-middleware-fixed')");
++      // var i18nextMiddleware = eval("require('i18next-express-middleware')");
+ 
+       _i18next["default"].use(i18nextNodeBackend);
+ 

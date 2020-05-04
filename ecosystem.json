@@ -1,21 +1,20 @@
 {
   "apps" : [
     {
-      "name"      : "auction-cms",
-      "script"    : "strapi",
-      "args"      : "start",   
+      "name"      : "auction-frontend",
+      "script"    : "ts-node",
+      "args"      : "--project tsconfig.server.json server/index.ts",   
       "instances" : 0,
       "exec_mode" : "cluster",
       "watch"     : false,
-      "error_file": "logs/aution-cms.stderr.log",
-      "out_file"  : "logs/aution-cms.stdout.log",
+      "error_file": "logs/aution-frontend.stderr.log",
+      "out_file"  : "logs/aution-frontend.stdout.log",
       "mergeLogs" : false,
       "env": {
         "NODE_ENV": "dev"
       },
       "env_production" : {
-        "NODE_ENV": "production",
-        "DATABASE_NAME": "auction"
+        "NODE_ENV": "production"
       },
       "env_pre" : {
         "NODE_ENV": "production"
