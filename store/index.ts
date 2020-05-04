@@ -1,7 +1,10 @@
 import { ACTIONS } from "../utils/constant";
 
 const initialState = {
-  accountInfo: null,
+  accountInfo: {
+    name: "",
+    token: "",
+  },
   errorMessage: "",
   isLoading: false,
   lang: "cn",

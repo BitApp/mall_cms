@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@svgr/webpack": "^5.4.0",
+    "@types/js-cookie": "^2.2.6",
     "@types/node": "^13.9.1",
     "@types/react": "^16.9.23",
     "@winstrike/next-i18next-koa": "^0.1.14",
@@ -24,6 +25,7 @@
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
     "iost": "^0.1.22",
+    "js-cookie": "^2.2.1",
     "koa": "^2.11.0",
     "koa-mount": "^4.0.0",
     "koa-router": "^8.0.8",
@@ -38,6 +40,7 @@
     "patch-package": "^6.2.2",
     "postcss-import": "^12.0.1",
     "react": "^16.13.0",
+    "react-cookie": "^4.0.3",
     "react-countdown": "^2.2.1",
     "react-dom": "^16.13.0",
     "react-loading-skeleton": "^2.0.1",

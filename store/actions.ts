@@ -32,6 +32,6 @@ export function closeAlert() {
   return { type: ACTIONS.CLOSE_ALERT, payload: null };
 }
 
-export function updateAccountInfo(name, password) {
-  return { type: ACTIONS.UPDATE_ACCOUNT_INFO, payload: { name, password } };
+export function updateAccountInfo(accountInfo) {
+  return { type: ACTIONS.UPDATE_ACCOUNT_INFO, payload: { accountInfo } };
 }

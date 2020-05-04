@@ -120,8 +120,8 @@ class Index extends React.Component<IProps> {
       // save token to cookie
       const expires = new Date();
       expires.setDate(expires.getDate() + 1);
-      document.cookie = `name=${res.data.name}; path=/; expires=${expires.toUTCString()}`;
-      document.cookie = `token=${res.data.token}; path=/; expires=${expires.toUTCString()}`;
+      document.cookie = `name=${res.data.data.name}; path=/; expires=${expires.toUTCString()}`;
+      document.cookie = `token=${res.data.data.token}; path=/; expires=${expires.toUTCString()}`;
       // redirect to index
       Router.push("/");
     } else {
