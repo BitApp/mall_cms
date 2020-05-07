@@ -34,21 +34,20 @@ class Nav extends React.Component<IProps> {
             <li className="flex-1 md:flex-none md:mr-3">
               <div className="relative inline-block">
                 <button className="drop-button text-white focus:outline-none">
-                  <span className="pr-2"><i className="em em-robot_face"></i></span> Hi, {accountInfo.name}
+                  <span className="pr-2"><i className="em em-robot_face"></i></span>
+                  Hi {", " + accountInfo.name ? accountInfo.name : ""}
+                  { accountInfo.name &&
                   <svg className="h-3 fill-current inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                  </svg>
+                  </svg> }
                 </button>
-                <div id="myDropdown" className="dropdownlist absolute bg-gray-900 text-white right-0 mt-3 p-3 overflow-auto z-30">
-                    {/* <input type="text" className="drop-search p-2 text-gray-600" placeholder="Search.." id="myInput"/>
-                    <a href="#" className="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block"><i className="fa fa-user fa-fw"></i> Profile</a>
-                    <a href="#" className="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block"><i className="fa fa-cog fa-fw"></i> Settings</a> */}
-                    <div className="border border-gray-800"></div>
-                    <a className="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block">
-                      <i className="fas fa-sign-out-alt fa-fw"></i>
-                      退出
-                    </a>
-                </div>
+                { accountInfo.name && <div id="myDropdown" className="dropdownlist absolute bg-gray-900 text-white right-0 mt-3 p-3 overflow-auto z-30" >
+                  <div className="border border-gray-800"></div>
+                  <a className="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block">
+                    <i className="fas fa-sign-out-alt fa-fw"></i>
+                    退出
+                  </a>
+                </div> }
               </div>
           </li>
         </ul>
@@ -60,7 +59,7 @@ class Nav extends React.Component<IProps> {
 function mapDispatchToProps(dispatch: Dispatch<any>) {
   return bindActionCreators(
     {
-      updateAccountInfo
+      updateAccountInfo,
     },
     dispatch,
   );
