@@ -1,12 +1,9 @@
 import axios from "axios";
 import IOST from "iost";
-import moment from "moment";
 import cookies from "next-cookies";
 import { WithTranslation } from "next-i18next";
 import React from "react";
-import Skeleton from "react-loading-skeleton";
 import { connect } from "react-redux";
-import Slider from "react-slick";
 // import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { bindActionCreators, Dispatch } from "redux";
 import FrameLayout from "../components/FrameLayout";

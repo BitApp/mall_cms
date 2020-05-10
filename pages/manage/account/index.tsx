@@ -1,13 +1,10 @@
 import axios from "axios";
 import IOST from "iost";
-import moment from "moment";
 import cookies from "next-cookies";
 import { WithTranslation } from "next-i18next";
+import Router from "next/router";
 import React from "react";
-import Skeleton from "react-loading-skeleton";
 import { connect } from "react-redux";
-import Slider from "react-slick";
-// import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { bindActionCreators, Dispatch } from "redux";
 import FrameLayout from "../../../components/FrameLayout";
 import Tips from "../../../components/Tips";
@@ -18,11 +15,11 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../store/actions";
-import { CHAIN_URL, CONTRACT_ADDRESS } from "../../../utils/constant";
+import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
 
 interface IProps extends WithTranslation {
-  accountInfo: any;
+  agentAccounts: [any];
   errorMessage: string;
   showError: boolean;
   showSuccess: boolean;
@@ -32,12 +29,28 @@ interface IProps extends WithTranslation {
   setWallet: (wallet: string) => Promise<void>;
   showSuccessMessage: (message: string) => void;
   showErrorMessage: (message: string) => void;
+  updateAgentAcounts: (agentAccounts: [any]) => void;
   closeAlert: () => void;
 }
 
 class Index extends React.Component<IProps> {
 
   public static async getInitialProps(ctx) {
+    const isServer = !!ctx.req;
+    const { dispatch } = ctx.store;
+    dispatch({type: ACTIONS.BUSY});
+    const { name, token, id } = cookies(ctx);
+    const res = await axios.get(`${ isServer ? SERVER_API_URL : API_URL }/account/agentaccount`, {
+      headers: {
+        auth: `${name}:${token}:${id}`,
+      },
+    });
+    const agentAccounts = res.data.data;
+    // By returning { props: posts }, the Blog component
+    // will receive `posts` as a prop at build time
+    dispatch({ type: ACTIONS.UPDATE_AGENT_ACCOUNT, payload: { agentAccounts }});
+    dispatch({ type: ACTIONS.FREE });
+
     return {
       namespacesRequired: ["common"],
     };
@@ -53,61 +66,53 @@ class Index extends React.Component<IProps> {
 
   public render() {
     const {
-      accountInfo,
+      agentAccounts,
       t,
       i18n,
       isLoading } = this.props;
+    const grid = <table className="table-auto w-full">
+        <thead>
+          <tr>
+            <th className="px-4 py-2">账户名(IOST主网)</th>
+            <th className="px-4 py-2">状态</th>
+            <th className="px-4 py-2">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        { agentAccounts.map((item: any, index) => {
+          return <tr key={index}>
+            <td className="border px-4 py-2 text-center text-blue-600">
+              <a target="_blank" href={ `https://www.iostabc.com/account/${item.name}` }>{item.name}</a>
+            </td>
+            <td className="border px-4 py-2 text-center">
+              { item.block ? "激活" : "可用" }
+            </td>
+            <td className="border px-4 py-2 text-center">
+              <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                禁用
+              </button>
+              <button className="ml-4 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                取消代理身份
+              </button>
+            </td>
+          </tr>; })
+        }
+      </tbody>
+    </table>;
+    const emptyGrid = <div className="mt-4 bg-gray-100 border px-4 py-2 text-center text-gray-800 text-sm">
+      暂无数据
+    </div>;
     return (
       <FrameLayout>
         <Tips/>
         <div className="p-6">
           <div className="p-2 bg-gray-200 rounded">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={ () => Router.push("/manage/account/add") }>
               新建代理账户
             </button>
           </div>
-          <table className="table-auto w-full">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">Title</th>
-                <th className="px-4 py-2">Author</th>
-                <th className="px-4 py-2">Views</th>
-                <th className="px-4 py-2">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border px-4 py-2">Intro to CSS</td>
-                <td className="border px-4 py-2">Adam</td>
-                <td className="border px-4 py-2">858</td>
-                <td className="border px-4 py-2 text-center">
-                  <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                    Button
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-gray-100">
-                <td className="border px-4 py-2">A Long and Winding Tour of the History of UI Frameworks and Tools and the Impact on Design</td>
-                <td className="border px-4 py-2">Adam</td>
-                <td className="border px-4 py-2">112</td>
-                <td className="border px-4 py-2 text-center">
-                  <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                    Button
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td className="border px-4 py-2">Intro to JavaScript</td>
-                <td className="border px-4 py-2">Chris</td>
-                <td className="border px-4 py-2">1,280</td>
-                <td className="border px-4 py-2 text-center">
-                  <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                    Button
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          { agentAccounts.length ? grid : emptyGrid }
         </div>
       </FrameLayout>
     );
@@ -141,8 +146,8 @@ function mapDispatchToProps(dispatch: Dispatch<any>) {
 }
 
 function mapStateToProps(state: any) {
-  const { accountInfo, wallet, errorMessage, showError, showSuccess, successMessage, isLoading } = state;
-  return { accountInfo, wallet, errorMessage, showError, showSuccess, successMessage, isLoading };
+  const { agentAccounts, wallet, errorMessage, showError, showSuccess, successMessage, isLoading } = state;
+  return { agentAccounts, wallet, errorMessage, showError, showSuccess, successMessage, isLoading };
 }
 
 export default connect(

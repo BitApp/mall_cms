@@ -1,5 +1,6 @@
 import cookies from "js-cookie";
 import { WithTranslation } from "next-i18next";
+import Router from "next/router";
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
@@ -16,12 +17,21 @@ interface IProps extends WithTranslation {
 
 class Nav extends React.Component<IProps> {
 
+  public dropDownMenu: any;
+
+  constructor(props) {
+    super(props);
+    this.dropDownMenu = React.createRef();
+  }
+
   public componentDidMount() {
     const name = cookies.get("name");
     const token = cookies.get("token");
+    const type = cookies.get("type");
     this.props.updateAccountInfo({
       name,
       token,
+      type,
     });
   }
 
@@ -33,17 +43,19 @@ class Nav extends React.Component<IProps> {
         <ul className="list-reset flex justify-between flex-1 md:flex-none items-center">
             <li className="flex-1 md:flex-none md:mr-3">
               <div className="relative inline-block">
-                <button className="drop-button text-white focus:outline-none">
+                <button className="drop-button text-white focus:outline-none"
+                onClick={(evt) => { this.toggleDD(); }}>
                   <span className="pr-2"><i className="em em-robot_face"></i></span>
                   Hi {", " + accountInfo.name ? accountInfo.name : ""}
+                  { accountInfo.name ? "(" + accountInfo.type + ") " : "" }
                   { accountInfo.name &&
                   <svg className="h-3 fill-current inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
                   </svg> }
                 </button>
-                { accountInfo.name && <div id="myDropdown" className="dropdownlist absolute bg-gray-900 text-white right-0 mt-3 p-3 overflow-auto z-30" >
+                { accountInfo.name && <div ref={this.dropDownMenu} className="dropdownlist absolute bg-gray-900 text-white right-0 mt-3 p-3 overflow-auto z-30 invisible" >
                   <div className="border border-gray-800"></div>
-                  <a className="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block">
+                  <a onClick={() => { this.signOut(); }} className="cursor-pointer p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block">
                     <i className="fas fa-sign-out-alt fa-fw"></i>
                     退出
                   </a>
@@ -53,6 +65,19 @@ class Nav extends React.Component<IProps> {
         </ul>
       </div>
     </nav>);
+  }
+
+  public toggleDD() {
+    this.dropDownMenu.current.classList.toggle("invisible");
+  }
+
+  public signOut() {
+    cookies.remove("name");
+    cookies.remove("id");
+    cookies.remove("token");
+    cookies.remove("type");
+    // call signout service
+    Router.push("/auth/login");
   }
 }
 

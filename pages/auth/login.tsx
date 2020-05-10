@@ -122,6 +122,8 @@ class Index extends React.Component<IProps> {
       expires.setDate(expires.getDate() + 1);
       document.cookie = `name=${res.data.data.name}; path=/; expires=${expires.toUTCString()}`;
       document.cookie = `token=${res.data.data.token}; path=/; expires=${expires.toUTCString()}`;
+      document.cookie = `type=${res.data.data.type}; path=/; expires=${expires.toUTCString()}`;
+      document.cookie = `id=${res.data.data.id}; path=/; expires=${expires.toUTCString()}`;
       // redirect to index
       Router.push("/");
     } else {

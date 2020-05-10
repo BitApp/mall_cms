@@ -4,10 +4,13 @@ const initialState = {
   accountInfo: {
     name: "",
     token: "",
+    type: "",
   },
+  agentAccounts: [],
   errorMessage: "",
   isLoading: false,
   lang: "cn",
+  path: "",
   showError: false,
   showSuccess: false,
   successMessage: "",
@@ -47,6 +50,16 @@ export const reducer = (state = initialState, action: IAuctionAction) => {
     return {
       ...state,
       accountInfo: action.payload.accountInfo,
+    };
+  } else if (action.type === ACTIONS.UPDATE_AGENT_ACCOUNT) {
+    return {
+      ...state,
+      agentAccounts: action.payload.agentAccounts,
+    };
+  } else if (action.type === ACTIONS.UPDATE_PATH) {
+    return {
+      ...state,
+      path: action.payload.path,
     };
   } else if (action.type === ACTIONS.SHOW_ERROR_MESSAGE) {
     return {

@@ -35,3 +35,11 @@ export function closeAlert() {
 export function updateAccountInfo(accountInfo) {
   return { type: ACTIONS.UPDATE_ACCOUNT_INFO, payload: { accountInfo } };
 }
+
+export function updateAgentAcounts(agentAccounts) {
+  return { type: ACTIONS.UPDATE_AGENT_ACCOUNT, payload: { agentAccounts } };
+}
+
+export function updatePath(path) {
+  return { type: ACTIONS.UPDATE_PATH, payload: { path } };
+}
