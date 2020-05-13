@@ -6,6 +6,7 @@ import { WithTranslation } from "next-i18next";
 import Router from "next/router";
 import React from "react";
 import { connect } from "react-redux";
+import ReactTags from "react-tag-autocomplete";
 import { bindActionCreators, Dispatch } from "redux";
 import FrameLayout from "../../../components/FrameLayout";
 import Tips from "../../../components/Tips";
@@ -16,8 +17,10 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../store/actions";
-import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
+import { ACTIONS, API_URL, CATEGORIES, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
+
+import "../../../styles/react-tags.scss";
 
 interface IProps extends WithTranslation {
   agentAccounts: [any];
@@ -33,31 +36,26 @@ interface IProps extends WithTranslation {
   closeAlert: () => void;
 }
 
-class AddAccount extends React.Component<IProps> {
-  public static async getInitialProps(ctx) {
-    const isServer = !!ctx.req;
-    const { dispatch } = ctx.store;
-    dispatch({type: ACTIONS.BUSY});
-    const { name, token, id } = nextCookies(ctx);
-    const res = await axios.get(`${ isServer ? SERVER_API_URL : API_URL }/account/agentaccount`, {
-      headers: {
-        auth: `${name}:${token}:${id}`,
-      },
-    });
-    const agentAccounts = res.data.data;
-    // By returning { props: posts }, the Blog component
-    // will receive `posts` as a prop at build time
-    dispatch({ type: ACTIONS.UPDATE_AGENT_ACCOUNT, payload: { agentAccounts }});
-    dispatch({ type: ACTIONS.FREE });
+interface IState {
+  name: string;
+  desc: string;
+  tags: any[];
+  suggestions: any[];
+}
 
+class AddProduct extends React.Component<IProps, IState> {
+  public static async getInitialProps(ctx) {
     return {
       namespacesRequired: ["common"],
     };
   }
 
-  public name: string = "";
-  public password: string = "";
-  public confirmPassword: string = "";
+  public state: IState = {
+    desc: "",
+    name: "",
+    suggestions: [],
+    tags: [],
+  };
 
   constructor(props) {
     super(props);
@@ -65,11 +63,23 @@ class AddAccount extends React.Component<IProps> {
 
   public componentDidMount() {
     this.initIwallet();
+    const suggestions: any[] = [];
+    let id = 1;
+    for (const name in CATEGORIES) {
+      if (name) {
+        suggestions.push({
+          id,
+          name,
+        });
+        id ++;
+      }
+    }
+    this.setState({ suggestions });
   }
 
   public render() {
+    const { tags, name, desc, suggestions } = this.state;
     const {
-      agentAccounts,
       t,
       i18n,
       isLoading } = this.props;
@@ -88,42 +98,37 @@ class AddAccount extends React.Component<IProps> {
             <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  IOST账户名
+                  商品名称
                 </label>
-                <input onChange={(evt) => { this.name = evt.target.value; }} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="text" placeholder="账户名"/>
-                <p className="text-gray-600 text-xs italic">
-                  把已经存在IOST主网账户添加为代理账户
-                 (<a className="text-blue-500">还没有创建主网账户?</a>)
-                </p>
+                <input onChange={(evt) => { this.setState({ name: evt.target.value }); }} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品名称"/>
               </div>
             </div>
             <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  密码
+                  商品描述
                 </label>
-                <input onChange={(evt) => { this.password = evt.target.value; }} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="password" placeholder="密码"/>
-                <p className="text-gray-600 text-xs italic">
-                  代理账户密码
-                </p>
+                <input onChange={(evt) => { this.setState({ desc: evt.target.value }); }} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品描述"/>
               </div>
             </div>
-            <div className="-mx-3 mb-6">
+            <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  确认密码
+                  商品类别
                 </label>
-                <input onChange={(evt) => { this.confirmPassword = evt.target.value; }} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="password" placeholder="密码"/>
-                <p className="text-gray-600 text-xs italic">
-                  确认密码
-                </p>
+                <ReactTags
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  tags={ tags }
+                  suggestions = { suggestions }
+                  handleDelete={ this.handleDelete.bind(this) }
+                  handleAddition={ this.handleAddition.bind(this) } />
               </div>
             </div>
             <div className="-mx-3">
               <div className="w-full px-3">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={(evt) => this.createAgentAccount(evt)}>
-                创建代理账户
+              onClick={(evt) => this.createProduct(evt)}>
+                创建兑换商品
               </button>
               </div>
             </div>
@@ -133,32 +138,20 @@ class AddAccount extends React.Component<IProps> {
     );
   }
 
-  public async createAgentAccount(evt) {
+  public handleAddition(tag) {
+    const originTags = this.state.tags;
+    const tags = originTags.concat([], tag);
+    this.setState({ tags });
+  }
+
+  public handleDelete(i) {
+    const tags = this.state.tags.slice(0);
+    tags.splice(i, 1);
+    this.setState({ tags });
+  }
+
+  public createProduct(evt) {
     evt.preventDefault();
-    if (this.name &&
-      this.password &&
-      this.confirmPassword &&
-      confirm("确定创建账户")) {
-      if (this.password !== this.confirmPassword) {
-        this.props.showErrorMessage("两次密码必须一致");
-        return;
-      }
-      try {
-        const result = await axios.post(`${API_URL}/auth/signup`, {
-          name: this.name,
-          parent: cookies.get("id"),
-          password: this.password,
-        });
-        if (result.data.code === "0") {
-          alert("创建账户" + this.name + "成功");
-          Router.push("/manage/account");
-        } else {
-          this.props.showErrorMessage(result.data.msg);
-        }
-      } catch (e) {
-        this.props.showErrorMessage(e.message);
-      }
-    }
   }
 
   public initIwallet() {
@@ -189,11 +182,11 @@ function mapDispatchToProps(dispatch: Dispatch<any>) {
 }
 
 function mapStateToProps(state: any) {
-  const { agentAccounts, wallet, errorMessage, showError, showSuccess, successMessage, isLoading } = state;
-  return { agentAccounts, wallet, errorMessage, showError, showSuccess, successMessage, isLoading };
+  const { wallet, errorMessage, showError, showSuccess, successMessage, isLoading } = state;
+  return { wallet, errorMessage, showError, showSuccess, successMessage, isLoading };
 }
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withTranslation("common")(AddAccount));
+)(withTranslation("common")(AddProduct));

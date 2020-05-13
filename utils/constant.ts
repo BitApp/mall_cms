@@ -24,9 +24,23 @@ export enum ACTIONS {
   UPDATE_PATH = "UPDATE_PATH",
 }
 
+export enum CATEGORIES {
+  ALL = "ALL",
+  ELECTRONIC = "ELECTRONIC",
+  DIGITAL = "DIGITAL",
+  ART = "ART",
+  MAKEUP = "MAKEUP",
+  DRESS = "DRESS",
+  BAG = "BAG",
+  IMPORT = "IMPORT",
+  BOOK = "BOOK",
+  KNOWLEDGE = "KNOWLEDGE",
+  OTHER = "OTHER",
+}
+
 export enum ACCOUNT_TYPE {
-  ROOT = "root",
-  AGENT = "agent",
+  ROOT = "ROOT",
+  AGENT = "AGENT",
 }
 
 export enum STATUS {

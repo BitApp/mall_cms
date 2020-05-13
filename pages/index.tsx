@@ -1,7 +1,5 @@
-import axios from "axios";
-import IOST from "iost";
-import cookies from "next-cookies";
 import { WithTranslation } from "next-i18next";
+import Router from "next/router";
 import React from "react";
 import { connect } from "react-redux";
 // import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -15,8 +13,6 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../store/actions";
-import { CHAIN_URL, CONTRACT_ADDRESS } from "../utils/constant";
-import { chainErrorMessage } from "../utils/helper";
 
 interface IProps extends WithTranslation {
   accountInfo: any;
@@ -50,14 +46,24 @@ class Index extends React.Component<IProps> {
 
   public render() {
     const {
-      accountInfo,
-      t,
-      i18n,
-      isLoading } = this.props;
+      wallet,
+      accountInfo } = this.props;
     return (
       <FrameLayout>
         <Tips/>
-        正文
+        <div className="p-6">
+          <div>
+            当前IOST账户:
+            <a className="ml-2 text-blue-500"
+            target="_target" href={`https://www.iostabc.com/account/${wallet}`}>{wallet}</a>
+          </div>
+          {!accountInfo.name && <div className="mt-4">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={ () => Router.push("/auth/login") }>
+              登录管理账户
+            </button>
+          </div>}
+        </div>
       </FrameLayout>
     );
   }
