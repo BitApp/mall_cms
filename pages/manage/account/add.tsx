@@ -144,9 +144,9 @@ class AddAccount extends React.Component<IProps> {
         return;
       }
       try {
-        const result = await axios.post(`${API_URL}/auth/signup`, {
+        const result = await axios.post(`${API_URL}/cms/auth/signup`, {
           name: this.name,
-          parent: cookies.get("id"),
+          parent: cookies.get("name"),
           password: this.password,
         });
         if (result.data.code === "0") {

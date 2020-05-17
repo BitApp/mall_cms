@@ -112,7 +112,7 @@ class Index extends React.Component<IProps> {
   }
 
   public async login(e) {
-    const res = await axios.post(`${API_URL}/auth/signin`, {
+    const res = await axios.post(`${API_URL}/cms/auth/signin`, {
       name: this.name,
       password: this.password,
     });
@@ -123,7 +123,6 @@ class Index extends React.Component<IProps> {
       document.cookie = `name=${res.data.data.name}; path=/; expires=${expires.toUTCString()}`;
       document.cookie = `token=${res.data.data.token}; path=/; expires=${expires.toUTCString()}`;
       document.cookie = `type=${res.data.data.type}; path=/; expires=${expires.toUTCString()}`;
-      document.cookie = `id=${res.data.data.id}; path=/; expires=${expires.toUTCString()}`;
       // redirect to index
       Router.push("/");
     } else {

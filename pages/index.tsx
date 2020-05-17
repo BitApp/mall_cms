@@ -1,10 +1,10 @@
 import { WithTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import Router from "next/router";
 import React from "react";
 import { connect } from "react-redux";
 // import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { bindActionCreators, Dispatch } from "redux";
-import FrameLayout from "../components/FrameLayout";
 import Tips from "../components/Tips";
 import { withTranslation } from "../i18n";
 import {
@@ -13,6 +13,7 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../store/actions";
+const FrameLayout = dynamic(() => import("../components/FrameLayout"),  { ssr: false });
 
 interface IProps extends WithTranslation {
   accountInfo: any;

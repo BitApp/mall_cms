@@ -1,14 +1,17 @@
-import axios from "axios";
-import IOST from "iost";
-import cookies from "js-cookie";
-import nextCookies from "next-cookies";
+// import axios from "axios";
+// import IOST from "iost";
+// import cookies from "js-cookie";
+// import nextCookies from "next-cookies";
+import { faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { WithTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import Router from "next/router";
 import React from "react";
+import ImageUploading from "react-images-uploading";
 import { connect } from "react-redux";
 import ReactTags from "react-tag-autocomplete";
 import { bindActionCreators, Dispatch } from "redux";
-import FrameLayout from "../../../components/FrameLayout";
 import Tips from "../../../components/Tips";
 import { withTranslation } from "../../../i18n";
 import {
@@ -19,6 +22,7 @@ import {
 } from "../../../store/actions";
 import { ACTIONS, API_URL, CATEGORIES, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
+const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { ssr: false });
 
 import "../../../styles/react-tags.scss";
 
@@ -41,6 +45,7 @@ interface IState {
   desc: string;
   tags: any[];
   suggestions: any[];
+  images: any[];
 }
 
 class AddProduct extends React.Component<IProps, IState> {
@@ -52,6 +57,7 @@ class AddProduct extends React.Component<IProps, IState> {
 
   public state: IState = {
     desc: "",
+    images: [],
     name: "",
     suggestions: [],
     tags: [],
@@ -83,6 +89,14 @@ class AddProduct extends React.Component<IProps, IState> {
       t,
       i18n,
       isLoading } = this.props;
+    const maxNumber = 5;
+    const maxMbFileSize = 5;
+    const onChange = (images) => {
+      // data for submit
+      this.setState({
+        images,
+      });
+    };
     return (
       <FrameLayout>
         <Tips/>
@@ -124,7 +138,46 @@ class AddProduct extends React.Component<IProps, IState> {
                   handleAddition={ this.handleAddition.bind(this) } />
               </div>
             </div>
-            <div className="-mx-3">
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  商品图片
+                </label>
+                <ImageUploading multiple maxFileSize={maxMbFileSize} onChange={onChange} maxNumber={maxNumber}>
+                  {({ imageList, onImageUpload, onImageRemoveAll }) => (
+                    // write your building UI
+                    <div className="upload__image-wrapper">
+                      <button
+                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                      onClick={(e) => { e.preventDefault(); onImageUpload(e); }}>上传图片</button>
+                      <button
+                      className="ml-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                      onClick={(e) => { e.preventDefault(); onImageRemoveAll(e); }}>删除图片</button>
+                      {imageList.map((image) => (
+                        <div key={image.key} className="image-item mt-4">
+                          <img src={image.dataURL} alt="" width="100" />
+                            <div className="image-item__btn-wrapper">
+                              <div className="mt-4">
+                                <a className="cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+                                  onClick={() => {
+                                    image.onUpdate();
+                                  }} >
+                                  <FontAwesomeIcon icon={faPenSquare} />
+                                </a>
+                                <a className="cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center ml-2"
+                                  onClick={image.onRemove} >
+                                  <FontAwesomeIcon icon={faTrash} />
+                                </a>
+                              </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ImageUploading>
+              </div>
+            </div>
+            <div className="-mx-3 mt-8">
               <div className="w-full px-3">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               onClick={(evt) => this.createProduct(evt)}>

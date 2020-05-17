@@ -6,7 +6,6 @@ const initialState = {
     token: "",
     type: "",
   },
-  agentAccounts: [],
   errorMessage: "",
   isLoading: false,
   lang: "cn",

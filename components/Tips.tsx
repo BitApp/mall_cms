@@ -28,11 +28,11 @@ class Tips extends React.Component<IProps> {
       successMessage,
       t} = this.props;
 
-    return <div>
+    return <div className="fixed" style={{left: "50%"}}>
     {
       showSuccess &&
       <div
-      className="z-50 bg-green-100 border border-green-400 text-green-700 px-16 py-3 rounded fixed mx-4 mt-4" role="alert">
+      className="z-50 bg-green-100 border border-green-400 text-green-700 px-16 py-3 rounded relative mx-4 mt-4" role="alert" style={{left: "-50%"}}>
         <span className="block sm:inline">{ successMessage }</span>
         <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick={() => { this.props.closeAlert(); }}>
           <svg
@@ -46,7 +46,7 @@ class Tips extends React.Component<IProps> {
       </div> }
       {showError &&
       <div
-      className="z-50 bg-red-100 border border-red-400 text-red-700 px-16 py-3 rounded fixed mx-4 mt-4"
+      className="z-50 bg-red-100 border border-red-400 text-red-700 px-16 py-3 rounded relative mx-4 mt-4" style={{left: "-50%"}}
       role="alert">
         <span className="block sm:inline">{ errorMessage }</span>
         <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick={() => { this.props.closeAlert(); }}>

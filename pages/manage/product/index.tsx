@@ -2,11 +2,11 @@ import axios from "axios";
 import IOST from "iost";
 import cookies from "next-cookies";
 import { WithTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import Router from "next/router";
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import FrameLayout from "../../../components/FrameLayout";
 import Tips from "../../../components/Tips";
 import { withTranslation } from "../../../i18n";
 import {
@@ -17,6 +17,7 @@ import {
 } from "../../../store/actions";
 import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
+const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { ssr: false });
 
 interface IProps extends WithTranslation {
   products: [any];

@@ -44,7 +44,7 @@ class Nav extends React.Component<IProps> {
             <li className="flex-1 md:flex-none md:mr-3">
               <div className="relative inline-block">
                 <button className="drop-button text-white focus:outline-none"
-                onClick={(evt) => { this.toggleDD(); }}>
+                onClick={() => { this.toggleDD(); }}>
                   <span className="pr-2"><i className="em em-robot_face"></i></span>
                   Hi {", " + accountInfo.name ? accountInfo.name : ""}
                   { accountInfo.name ? "(" + accountInfo.type + ") " : "Guest" }

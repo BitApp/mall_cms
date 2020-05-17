@@ -2,11 +2,11 @@ import axios from "axios";
 import IOST from "iost";
 import cookies from "next-cookies";
 import { WithTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import Router from "next/router";
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import FrameLayout from "../../../components/FrameLayout";
 import Tips from "../../../components/Tips";
 import { withTranslation } from "../../../i18n";
 import {
@@ -17,6 +17,7 @@ import {
 } from "../../../store/actions";
 import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
+const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { ssr: false });
 
 interface IProps extends WithTranslation {
   agentAccounts: [any];
@@ -29,7 +30,6 @@ interface IProps extends WithTranslation {
   setWallet: (wallet: string) => Promise<void>;
   showSuccessMessage: (message: string) => void;
   showErrorMessage: (message: string) => void;
-  updateAgentAcounts: (agentAccounts: [any]) => void;
   closeAlert: () => void;
 }
 
@@ -39,19 +39,18 @@ class Index extends React.Component<IProps> {
     const isServer = !!ctx.req;
     const { dispatch } = ctx.store;
     dispatch({type: ACTIONS.BUSY});
-    const { name, token, id } = cookies(ctx);
-    const res = await axios.get(`${ isServer ? SERVER_API_URL : API_URL }/account/agentaccount`, {
+    const { name, token  } = cookies(ctx);
+    const res = await axios.get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/agentaccount`, {
       headers: {
-        auth: `${name}:${token}:${id}`,
+        auth: `${name}:${token}`,
       },
     });
     const agentAccounts = res.data.data;
     // By returning { props: posts }, the Blog component
     // will receive `posts` as a prop at build time
-    dispatch({ type: ACTIONS.UPDATE_AGENT_ACCOUNT, payload: { agentAccounts }});
     dispatch({ type: ACTIONS.FREE });
-
     return {
+      agentAccounts,
       namespacesRequired: ["common"],
     };
   }
@@ -65,11 +64,7 @@ class Index extends React.Component<IProps> {
   }
 
   public render() {
-    const {
-      agentAccounts,
-      t,
-      i18n,
-      isLoading } = this.props;
+    const { agentAccounts } = this.props;
     const grid = <table className="table-auto w-full">
         <thead>
           <tr>
@@ -146,8 +141,8 @@ function mapDispatchToProps(dispatch: Dispatch<any>) {
 }
 
 function mapStateToProps(state: any) {
-  const { agentAccounts, wallet, errorMessage, showError, showSuccess, successMessage, isLoading } = state;
-  return { agentAccounts, wallet, errorMessage, showError, showSuccess, successMessage, isLoading };
+  const { wallet, errorMessage, showError, showSuccess, successMessage, isLoading } = state;
+  return { wallet, errorMessage, showError, showSuccess, successMessage, isLoading };
 }
 
 export default connect(
