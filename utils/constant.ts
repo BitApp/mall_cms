@@ -25,7 +25,6 @@ export enum ACTIONS {
 }
 
 export enum CATEGORIES {
-  ALL = "ALL",
   ELECTRONIC = "ELECTRONIC",
   DIGITAL = "DIGITAL",
   ART = "ART",
@@ -37,6 +36,19 @@ export enum CATEGORIES {
   KNOWLEDGE = "KNOWLEDGE",
   OTHER = "OTHER",
 }
+
+export const CATEGORIES_MAP = {
+  ART : "艺术",
+  BAG : "箱包",
+  BOOK : "书籍",
+  DIGITAL : "数码",
+  DRESS : "穿搭",
+  ELECTRONIC : "电子",
+  IMPORT : "进口",
+  KNOWLEDGE : "知识付费",
+  MAKEUP : "美妆",
+  OTHER : "其他",
+};
 
 export enum ACCOUNT_TYPE {
   ROOT = "ROOT",

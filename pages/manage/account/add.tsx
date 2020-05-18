@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../../utils/axios";
 import IOST from "iost";
 import cookies from "js-cookie";
 import nextCookies from "next-cookies";
@@ -38,10 +38,10 @@ class AddAccount extends React.Component<IProps> {
     const isServer = !!ctx.req;
     const { dispatch } = ctx.store;
     dispatch({type: ACTIONS.BUSY});
-    const { name, token, id } = nextCookies(ctx);
+    const { name, token } = nextCookies(ctx);
     const res = await axios.get(`${ isServer ? SERVER_API_URL : API_URL }/account/agentaccount`, {
       headers: {
-        auth: `${name}:${token}:${id}`,
+        auth: `${name}:${token}`,
       },
     });
     const agentAccounts = res.data.data;

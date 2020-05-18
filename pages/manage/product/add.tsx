@@ -1,8 +1,8 @@
-// import axios from "axios";
+import axios from "../../../utils/axios";
 // import IOST from "iost";
-// import cookies from "js-cookie";
+import cookies from "js-cookie";
 // import nextCookies from "next-cookies";
-import { faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { WithTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
@@ -20,7 +20,7 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../store/actions";
-import { ACTIONS, API_URL, CATEGORIES, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
+import { API_URL, CATEGORIES, CATEGORIES_MAP, STATUS } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
 const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { ssr: false });
 
@@ -46,6 +46,8 @@ interface IState {
   tags: any[];
   suggestions: any[];
   images: any[];
+  iostSupport: boolean;
+  ownTokenSupport: boolean;
 }
 
 class AddProduct extends React.Component<IProps, IState> {
@@ -58,7 +60,9 @@ class AddProduct extends React.Component<IProps, IState> {
   public state: IState = {
     desc: "",
     images: [],
+    iostSupport: true,
     name: "",
+    ownTokenSupport: false,
     suggestions: [],
     tags: [],
   };
@@ -75,7 +79,7 @@ class AddProduct extends React.Component<IProps, IState> {
       if (name) {
         suggestions.push({
           id,
-          name,
+          name: CATEGORIES_MAP[name],
         });
         id ++;
       }
@@ -84,7 +88,7 @@ class AddProduct extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { tags, name, desc, suggestions } = this.state;
+    const { tags, name, desc, suggestions, iostSupport, ownTokenSupport } = this.state;
     const {
       t,
       i18n,
@@ -114,7 +118,7 @@ class AddProduct extends React.Component<IProps, IState> {
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   商品名称
                 </label>
-                <input onChange={(evt) => { this.setState({ name: evt.target.value }); }} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品名称"/>
+                <input onChange={(evt) => { this.setState({ name: evt.target.value.trim() }); }} value={name} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品名称"/>
               </div>
             </div>
             <div className="-mx-3 mb-4">
@@ -122,7 +126,7 @@ class AddProduct extends React.Component<IProps, IState> {
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   商品描述
                 </label>
-                <input onChange={(evt) => { this.setState({ desc: evt.target.value }); }} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品描述"/>
+                <input onChange={(evt) => { this.setState({ desc: evt.target.value.trim() }); }} value={desc} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品描述"/>
               </div>
             </div>
             <div className="-mx-3 mb-4">
@@ -136,6 +140,13 @@ class AddProduct extends React.Component<IProps, IState> {
                   suggestions = { suggestions }
                   handleDelete={ this.handleDelete.bind(this) }
                   handleAddition={ this.handleAddition.bind(this) } />
+                <p className="text-xs mt-2">
+                  { suggestions.map((item, index) =>
+                    <a key={item.id} onClick={() => {this.handleAddition(item); }} className="mr-1 mb-1 cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center rounded-full">
+                      { item.name }
+                    </a> )
+                  }
+                </p>
               </div>
             </div>
             <div className="-mx-3 mb-4">
@@ -177,6 +188,29 @@ class AddProduct extends React.Component<IProps, IState> {
                 </ImageUploading>
               </div>
             </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  兑换Token
+                </label>
+                <label className="custom-checkbox-lable flex">
+                  <div className="bg-white border-2 rounded w-6 h-6 p-1 flex justify-center items-center mr-2 opacity-50">
+                    <input type="checkbox" className="hidden" checked={ iostSupport }
+                    onChange={(e) => e.preventDefault()} />
+                    <FontAwesomeIcon className="hidden w-4 h-4 text-green-600 pointer-events-none" icon={ faCheck }/>
+                  </div>
+                  <span className="select-none">IOST</span>
+                </label>
+                <label className="custom-checkbox-lable flex mt-2 cursor-pointer">
+                  <div className="bg-white border-2 rounded w-6 h-6 p-1 flex justify-center items-center mr-2">
+                    <input type="checkbox" className="hidden" checked={ ownTokenSupport }
+                    onChange={() => this.setState({ownTokenSupport: !ownTokenSupport})}/>
+                    <FontAwesomeIcon className="hidden w-4 h-4 text-green-600 pointer-events-none" icon={ faCheck }/>
+                  </div>
+                  <span className="select-none">OwnToken</span>
+                </label>
+              </div>
+            </div>
             <div className="-mx-3 mt-8">
               <div className="w-full px-3">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -203,8 +237,35 @@ class AddProduct extends React.Component<IProps, IState> {
     this.setState({ tags });
   }
 
-  public createProduct(evt) {
+  public async createProduct(evt) {
     evt.preventDefault();
+    if (this.state.name &&
+      this.state.desc &&
+      this.state.tags.length &&
+      this.state.images.length) {
+      if (confirm("确定创建商品?")) {
+        try {
+          const result = await axios.post(`${API_URL}/cms/product/add`, {
+            desc: this.state.desc,
+            imgs: this.state.images,
+            iostSupport: this.state.iostSupport,
+            name: this.state.name,
+            ownTokenSupport: this.state.ownTokenSupport,
+            types: this.state.tags,
+          });
+          if (result.data.code === STATUS.OK) {
+            alert("创建商品" + this.state.name + "成功");
+            Router.push("/manage/product");
+          } else {
+            this.props.showErrorMessage(result.data.msg);
+          }
+        } catch (e) {
+          this.props.showErrorMessage(e.message);
+        }
+      }
+    } else {
+      alert("请填写完整相应字段");
+    }
   }
 
   public initIwallet() {
