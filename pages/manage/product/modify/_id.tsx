@@ -1,4 +1,4 @@
-import { getAxios } from "../../../utils/axios";
+import { getAxios } from "../../../../utils/axios";
 // import IOST from "iost";
 import cookies from "js-cookie";
 // import nextCookies from "next-cookies";
@@ -12,17 +12,17 @@ import ImageUploading from "react-images-uploading";
 import { connect } from "react-redux";
 import ReactTags from "react-tag-autocomplete";
 import { bindActionCreators, Dispatch } from "redux";
-import Tips from "../../../components/Tips";
-import { withTranslation } from "../../../i18n";
+import Tips from "../../../../components/Tips";
+import { withTranslation } from "../../../../i18n";
 import {
   closeAlert,
   setWallet,
   showErrorMessage,
   showSuccessMessage,
-} from "../../../store/actions";
-import { API_URL, CATEGORIES, CATEGORIES_MAP, STATUS } from "../../../utils/constant";
-import { chainErrorMessage } from "../../../utils/helper";
-const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { ssr: false });
+} from "../../../../store/actions";
+import { API_URL, CATEGORIES, CATEGORIES_MAP, STATUS } from "../../../../utils/constant";
+import { chainErrorMessage } from "../../../../utils/helper";
+const FrameLayout = dynamic(() => import("../../../../components/FrameLayout"),  { ssr: false });
 
 import "../../../styles/react-tags.scss";
 
@@ -245,9 +245,8 @@ class AddProduct extends React.Component<IProps, IState> {
       this.state.desc &&
       this.state.tags.length &&
       this.state.images.length) {
-      if (confirm("确定创建商品?")) {
         try {
-          const result = await getAxios().post(`${API_URL}/cms/product/add`, {
+          const result = await getAxios().post(`${API_URL}/cms/product/modify`, {
             desc: this.state.desc,
             imgs: this.state.images,
             iostSupport: this.state.iostSupport,
@@ -256,7 +255,7 @@ class AddProduct extends React.Component<IProps, IState> {
             types: this.state.tags,
           });
           if (result.data.code === STATUS.OK) {
-            alert("创建商品" + this.state.name + "成功");
+            alert("修改商品" + this.state.name + "成功");
             Router.push("/manage/product");
           } else {
             this.props.showErrorMessage(result.data.msg);
@@ -264,7 +263,6 @@ class AddProduct extends React.Component<IProps, IState> {
         } catch (e) {
           this.props.showErrorMessage(e.message);
         }
-      }
     } else {
       alert("请填写完整相应字段");
     }

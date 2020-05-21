@@ -1,4 +1,4 @@
-import axios from "axios";
+import { getAxios } from "../../../utils/axios";
 import IOST from "iost";
 import cookies from "next-cookies";
 import { WithTranslation } from "next-i18next";
@@ -39,8 +39,8 @@ class Index extends React.Component<IProps> {
     const isServer = !!ctx.req;
     const { dispatch } = ctx.store;
     dispatch({type: ACTIONS.BUSY});
-    const { name, token  } = cookies(ctx);
-    const res = await axios.get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/agentaccount`, {
+    const { name, token } = cookies(ctx);
+    const res = await getAxios().get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/agentaccount`, {
       headers: {
         auth: `${name}:${token}`,
       },

@@ -1,4 +1,3 @@
-import axios from "../../../utils/axios";
 import IOST from "iost";
 import cookies from "js-cookie";
 import nextCookies from "next-cookies";
@@ -16,6 +15,7 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../store/actions";
+import { getAxios } from "../../../utils/axios";
 import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
 
@@ -39,7 +39,7 @@ class AddAccount extends React.Component<IProps> {
     const { dispatch } = ctx.store;
     dispatch({type: ACTIONS.BUSY});
     const { name, token } = nextCookies(ctx);
-    const res = await axios.get(`${ isServer ? SERVER_API_URL : API_URL }/account/agentaccount`, {
+    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/account/agentaccount`, {
       headers: {
         auth: `${name}:${token}`,
       },
@@ -79,7 +79,7 @@ class AddAccount extends React.Component<IProps> {
         <div className="p-6">
           <div className="p-2 border-gray-400 border-b-2 text-blue-600 cursor-pointer">
             <svg viewBox="0 0 20 20"
-            className="fill-current h-5 w-5 align-middle inline-block" onClick={ () => { Router.back(); } }>
+            className="fill-current h-5 w-5 align-middle inline-block" onClick={ () => { Router.push("/manage/account") } }>
               <path fill="#3182ce" d="M12.452,4.516c0.446,0.436,0.481,1.043,0,1.576L8.705,10l3.747,3.908c0.481,0.533,0.446,1.141,0,1.574  c-0.445,0.436-1.197,0.408-1.615,0c-0.418-0.406-4.502-4.695-4.502-4.695C6.112,10.57,6,10.285,6,10s0.112-0.57,0.335-0.789  c0,0,4.084-4.287,4.502-4.695C11.255,4.107,12.007,4.08,12.452,4.516z"/>
             </svg>
             <span className="align-middle ml-1">返回</span>
@@ -144,7 +144,7 @@ class AddAccount extends React.Component<IProps> {
         return;
       }
       try {
-        const result = await axios.post(`${API_URL}/cms/auth/signup`, {
+        const result = await getAxios().post(`${API_URL}/cms/auth/signup`, {
           name: this.name,
           parent: cookies.get("name"),
           password: this.password,
