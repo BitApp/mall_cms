@@ -206,7 +206,7 @@ class Index extends React.Component<IProps> {
       })
       .on("success", (result) => {
         // 刷新数据
-        that.props.showSuccessMessage(item.name + "上链成功，请等待30左右刷新确认");
+        that.props.showSuccessMessage(item.name + "上链成功，请等待30左右刷新再次确认状态，请勿重复上链");
       })
       .on("failed", (failed) => {
         that.props.showErrorMessage(chainErrorMessage(failed));
