@@ -42,7 +42,6 @@ class Index extends React.Component<IProps> {
     const isServer = !!ctx.req;
     const { dispatch } = ctx.store;
     dispatch({type: ACTIONS.BUSY});
-    const { name, token  } = cookies(ctx);
     const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/cms/products`);
     const products = res.data.data;
     // By returning { props: posts }, the Blog component
@@ -75,6 +74,8 @@ class Index extends React.Component<IProps> {
           <th className="px-4 py-2">商品描述</th>
           <th className="px-4 py-2">商品图片</th>
           <th className="px-4 py-2">商品类别</th>
+          <th className="px-4 py-2">价格</th>
+          <th className="px-4 py-2">库存</th>
           <th className="px-4 py-2">状态</th>
           <th className="px-4 py-2">时间</th>
           <th className="px-4 py-2">操作</th>
@@ -100,6 +101,12 @@ class Index extends React.Component<IProps> {
           )) }
           </td>
           <td className="border px-4 py-2 text-center">
+          { item.price } {item.token.toUpperCase()}
+          </td>
+          <td className="border px-4 py-2 text-center">
+          { item.quantity }
+          </td>
+          <td className="border px-4 py-2 text-center">
           { item.status }
           </td>
           <td className="border px-4 py-2 text-center">
@@ -112,8 +119,10 @@ class Index extends React.Component<IProps> {
                 "hover:border-transparent hover:text-white hover:bg-blue-500": item.status === PRODUCT_STATUS.OFFLINE,
                 "opacity-50": item.status !== PRODUCT_STATUS.OFFLINE,
               })
-              }>
-              修改
+              } onClick={ () => {
+                this.onChain(item);
+              }}>
+              上链
             </button>
             <button disabled={ item.status !== PRODUCT_STATUS.OFFLINE } className={
               classnames("bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2",
@@ -121,7 +130,9 @@ class Index extends React.Component<IProps> {
                 "hover:border-transparent hover:text-white hover:bg-blue-500": item.status === PRODUCT_STATUS.OFFLINE,
                 "opacity-50": item.status !== PRODUCT_STATUS.OFFLINE,
               })
-              }>
+              } onClick={ () => {
+                Router.push(`/manage/product/modify/${item._id}`);
+              } }>
               编辑
             </button>
             <button disabled={ item.status !== PRODUCT_STATUS.OFFLINE } className={
@@ -169,6 +180,38 @@ class Index extends React.Component<IProps> {
         });
       }
     }, 1000);
+  }
+
+  public onChain(item) {
+    if (confirm("商品上链之后无法修改，确定上链" + item.name + "吗?")) {
+      const win = window as any;
+      const iost = win.IWalletJS.newIOST(IOST);
+      // const { wallet, t } = this.props;
+      const that = this;
+      const tx = iost.callABI(
+        CONTRACT_ADDRESS,
+        "addProduct",
+        [
+          item._id,
+          item.name,
+          item.price.toString(),
+          item.quantity.toString(),
+          item.token,
+        ],
+      );
+      tx.gasLimit = 300000;
+      // tx.addApprove("iost", price.toString());
+      iost.signAndSend(tx).on("pending", (trx) => {
+        console.info(trx);
+      })
+      .on("success", (result) => {
+        // 刷新数据
+        that.props.showSuccessMessage(item.name + "上链成功，请等待30左右刷新确认");
+      })
+      .on("failed", (failed) => {
+        that.props.showErrorMessage(chainErrorMessage(failed));
+      });
+    }
   }
 }
 

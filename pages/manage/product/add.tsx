@@ -1,9 +1,8 @@
-import { getAxios } from "../../../utils/axios";
-// import IOST from "iost";
-import cookies from "js-cookie";
 // import nextCookies from "next-cookies";
 import { faCheck, faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import IOST from "iost";
+import cookies from "js-cookie";
 import { WithTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Router from "next/router";
@@ -20,6 +19,7 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../store/actions";
+import { getAxios } from "../../../utils/axios";
 import { API_URL, CATEGORIES, CATEGORIES_MAP, STATUS } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
 const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { ssr: false });
@@ -46,8 +46,9 @@ interface IState {
   tags: any[];
   suggestions: any[];
   images: any[];
-  iostSupport: boolean;
-  ownTokenSupport: boolean;
+  token: string;
+  price: number;
+  quantity: number;
 }
 
 class AddProduct extends React.Component<IProps, IState> {
@@ -60,11 +61,12 @@ class AddProduct extends React.Component<IProps, IState> {
   public state: IState = {
     desc: "",
     images: [],
-    iostSupport: true,
     name: "",
-    ownTokenSupport: false,
+    price: 1,
+    quantity: 1,
     suggestions: [],
     tags: [],
+    token: "iost",
   };
 
   constructor(props) {
@@ -88,7 +90,7 @@ class AddProduct extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { tags, name, desc, suggestions, iostSupport, ownTokenSupport } = this.state;
+    const { tags, name, desc, suggestions, price, quantity } = this.state;
     const {
       t,
       i18n,
@@ -120,7 +122,13 @@ class AddProduct extends React.Component<IProps, IState> {
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   商品名称
                 </label>
-                <input onChange={(evt) => { this.setState({ name: evt.target.value.trim() }); }} value={name} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品名称"/>
+                <input
+                autoFocus
+                onChange={(evt) => { this.setState({ name: evt.target.value.trim() }); }}
+                value={name}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="text"
+                placeholder="商品名称"/>
               </div>
             </div>
             <div className="-mx-3 mb-4">
@@ -190,7 +198,7 @@ class AddProduct extends React.Component<IProps, IState> {
                 </ImageUploading>
               </div>
             </div>
-            <div className="-mx-3 mb-4">
+            {/* <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   兑换Token
@@ -211,6 +219,36 @@ class AddProduct extends React.Component<IProps, IState> {
                   </div>
                   <span className="select-none">OwnToken</span>
                 </label>
+              </div>
+            </div> */}
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  价格
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ price: Number(evt.target.value.trim()) }); }}
+                value={price}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="number"
+                min="1"
+                step="100"
+                placeholder="价格"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  库存
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ quantity: Number(evt.target.value.trim()) }); }}
+                value={quantity}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="库存"/>
               </div>
             </div>
             <div className="-mx-3 mt-8">
@@ -250,9 +288,10 @@ class AddProduct extends React.Component<IProps, IState> {
           const result = await getAxios().post(`${API_URL}/cms/product/add`, {
             desc: this.state.desc,
             imgs: this.state.images,
-            iostSupport: this.state.iostSupport,
+            token: this.state.token,
             name: this.state.name,
-            ownTokenSupport: this.state.ownTokenSupport,
+            price: this.state.price,
+            quantity: this.state.quantity,
             types: this.state.tags,
           });
           if (result.data.code === STATUS.OK) {

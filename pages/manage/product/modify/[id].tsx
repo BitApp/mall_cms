@@ -1,9 +1,7 @@
-import { getAxios } from "../../../../utils/axios";
-// import IOST from "iost";
-import cookies from "js-cookie";
 // import nextCookies from "next-cookies";
 import { faCheck, faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import IOST from "iost";
 import { WithTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Router from "next/router";
@@ -20,11 +18,12 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../../store/actions";
-import { API_URL, CATEGORIES, CATEGORIES_MAP, STATUS } from "../../../../utils/constant";
+import { getAxios } from "../../../../utils/axios";
+import { API_URL, CATEGORIES, CATEGORIES_MAP, STATUS, ACTIONS, SERVER_API_URL } from "../../../../utils/constant";
 import { chainErrorMessage } from "../../../../utils/helper";
-const FrameLayout = dynamic(() => import("../../../../components/FrameLayout"),  { ssr: false });
+const FrameLayout = dynamic(() => import("../../../../components/FrameLayout"), { ssr: false });
 
-import "../../../styles/react-tags.scss";
+import "../../../../styles/react-tags.scss";
 
 interface IProps extends WithTranslation {
   agentAccounts: [any];
@@ -33,6 +32,8 @@ interface IProps extends WithTranslation {
   showSuccess: boolean;
   successMessage: string;
   isLoading: boolean;
+  product: any;
+  id: string;
   wallet: string;
   setWallet: (wallet: string) => Promise<void>;
   showSuccessMessage: (message: string) => void;
@@ -46,25 +47,40 @@ interface IState {
   tags: any[];
   suggestions: any[];
   images: any[];
-  iostSupport: boolean;
-  ownTokenSupport: boolean;
+  defaultImages: any[];
+  token: string;
+  price: number;
+  quantity: number;
 }
 
-class AddProduct extends React.Component<IProps, IState> {
+class ModifyProduct extends React.Component<IProps, IState> {
   public static async getInitialProps(ctx) {
+    const id = ctx.query.id;
+    const isServer = !!ctx.req;
+    const { dispatch } = ctx.store;
+    dispatch({type: ACTIONS.BUSY});
+    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/cms/products/${id}`);
+    const products = res.data.data;
+    // By returning { props: posts }, the Blog component
+    // will receive `posts` as a prop at build time
+    dispatch({ type: ACTIONS.FREE });
     return {
+      id,
       namespacesRequired: ["common"],
+      product: products[0],
     };
   }
 
   public state: IState = {
+    defaultImages: [],
     desc: "",
     images: [],
-    iostSupport: true,
     name: "",
-    ownTokenSupport: false,
+    price: 1,
+    quantity: 1,
     suggestions: [],
     tags: [],
+    token: "iost",
   };
 
   constructor(props) {
@@ -84,21 +100,31 @@ class AddProduct extends React.Component<IProps, IState> {
         id ++;
       }
     }
-    this.setState({ suggestions });
+    this.setState({
+      defaultImages: this.props.product.imgs,
+      desc: this.props.product.desc,
+      name: this.props.product.name,
+      price: this.props.product.price,
+      quantity: this.props.product.quantity,
+      suggestions,
+      tags: this.props.product.types,
+      token: this.props.product.token,
+    });
   }
 
   public render() {
-    const { tags, name, desc, suggestions, iostSupport, ownTokenSupport } = this.state;
+    const { tags, name, desc, suggestions, token, images, price, quantity, defaultImages } = this.state;
     const {
       t,
       i18n,
-      isLoading } = this.props;
+      isLoading,
+      product } = this.props;
     const maxNumber = 5;
     const maxMbFileSize = 5;
-    const onChange = (images) => {
+    const onChange = (uploadImages) => {
       // data for submit
       this.setState({
-        images,
+        images: uploadImages,
       });
     };
     return (
@@ -156,7 +182,10 @@ class AddProduct extends React.Component<IProps, IState> {
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   商品图片
                 </label>
-                <ImageUploading multiple maxFileSize={maxMbFileSize} onChange={onChange} maxNumber={maxNumber}>
+                <ImageUploading
+                maxFileSize={maxMbFileSize}
+                onChange={onChange}
+                imgExtension={[".jpg", ".png"]}>
                   {({ imageList, onImageUpload, onImageRemoveAll }) => (
                     // write your building UI
                     <div className="upload__image-wrapper">
@@ -185,12 +214,32 @@ class AddProduct extends React.Component<IProps, IState> {
                           </div>
                         </div>
                       ))}
+                      {defaultImages.map((image, index) => (
+                        <div key={index} className="image-item mt-4">
+                          <img src={image} alt="" width="100" />
+                            <div className="image-item__btn-wrapper">
+                              <div className="mt-4">
+                                <a className="cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center ml-2"
+                                  onClick={
+                                    () => {
+                                      defaultImages.splice(index, 1);
+                                      this.setState({
+                                        defaultImages,
+                                      });
+                                    }
+                                  } >
+                                  <FontAwesomeIcon icon={faTrash} />
+                                </a>
+                              </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </ImageUploading>
               </div>
             </div>
-            <div className="-mx-3 mb-4">
+            {/* <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   兑换Token
@@ -212,12 +261,42 @@ class AddProduct extends React.Component<IProps, IState> {
                   <span className="select-none">OwnToken</span>
                 </label>
               </div>
+            </div> */}
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  价格
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ price: Number(evt.target.value.trim()) }); }}
+                value={price}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="number"
+                min="1"
+                step="100"
+                placeholder="价格"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  库存
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ quantity: Number(evt.target.value.trim()) }); }}
+                value={quantity}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="库存"/>
+              </div>
             </div>
             <div className="-mx-3 mt-8">
               <div className="w-full px-3">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={(evt) => this.createProduct(evt)}>
-                创建兑换商品
+              onClick={(evt) => this.updateProduct(evt)}>
+                保存商品
               </button>
               </div>
             </div>
@@ -239,19 +318,20 @@ class AddProduct extends React.Component<IProps, IState> {
     this.setState({ tags });
   }
 
-  public async createProduct(evt) {
+  public async updateProduct(evt) {
     evt.preventDefault();
     if (this.state.name &&
       this.state.desc &&
       this.state.tags.length &&
-      this.state.images.length) {
+      (this.state.images.length || this.state.defaultImages.length)) {
         try {
-          const result = await getAxios().post(`${API_URL}/cms/product/modify`, {
+          const result = await getAxios().post(`${API_URL}/cms/product/modify/${this.props.id}`, {
             desc: this.state.desc,
             imgs: this.state.images,
-            iostSupport: this.state.iostSupport,
+            token: this.state.token,
             name: this.state.name,
-            ownTokenSupport: this.state.ownTokenSupport,
+            price: this.state.price,
+            quantity: this.state.quantity,
             types: this.state.tags,
           });
           if (result.data.code === STATUS.OK) {
@@ -303,4 +383,4 @@ function mapStateToProps(state: any) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withTranslation("common")(AddProduct));
+)(withTranslation("common")(ModifyProduct));

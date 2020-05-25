@@ -49,6 +49,7 @@
     "react-cookie": "^4.0.3",
     "react-countdown": "^2.2.1",
     "react-dom": "^16.13.0",
+    "react-images-upload": "^1.2.8",
     "react-images-uploading": "^2.1.1",
     "react-loading-skeleton": "^2.0.1",
     "react-redux": "^7.2.0",
