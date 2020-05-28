@@ -15,11 +15,13 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../store/actions";
+import { getAxios } from "../../../utils/axios";
 import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
+import classnames from "classnames";
 
 interface IProps extends WithTranslation {
-  products: [any];
+  tokens: [any];
   errorMessage: string;
   showError: boolean;
   showSuccess: boolean;
@@ -36,8 +38,17 @@ interface IProps extends WithTranslation {
 class Index extends React.Component<IProps> {
 
   public static async getInitialProps(ctx) {
+    const isServer = !!ctx.req;
+    const { dispatch } = ctx.store;
+    dispatch({type: ACTIONS.BUSY});
+    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/token`);
+    const token = res.data.data;
+    // By returning { props: posts }, the Blog component
+    // will receive `posts` as a prop at build time
+    dispatch({ type: ACTIONS.FREE });
     return {
       namespacesRequired: ["common"],
+      tokens: token ? [token] : [],
     };
   }
 
@@ -53,32 +64,73 @@ class Index extends React.Component<IProps> {
     const {
       t,
       i18n,
-      isLoading } = this.props;
+      isLoading,
+      tokens } = this.props;
     const grid = <table className="table-auto w-full">
         <thead>
           <tr>
-            <th className="px-4 py-2">账户名(IOST主网)</th>
-            <th className="px-4 py-2">状态</th>
+            <th className="px-4 py-2">代币</th>
+            <th className="px-4 py-2">精度</th>
+            <th className="px-4 py-2">回购</th>
+            <th className="px-4 py-2">回购余额</th>
+            <th className="px-4 py-2">回购比例</th>
             <th className="px-4 py-2">操作</th>
           </tr>
         </thead>
         <tbody>
-      </tbody>
+        { tokens.map((item: any, index) => {
+        return <tr key={index}>
+          <td className="border px-4 py-2 text-center">
+          { item.symbol }
+          </td>
+          <td className="border px-4 py-2 text-center">
+          { item.decimal }
+          </td>
+          <td className="border px-4 py-2 text-center">
+          { item.token }
+          </td>
+          <td className="border px-4 py-2 text-center">
+          { item.quantity }
+          </td>
+          <td className="border px-4 py-2 text-center">
+          { item.status }
+          </td>
+          <td className="border px-4 py-2 text-center">
+            <button className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
+              onClick={ () => {
+                Router.push(`/manage/token/modify/${item._id}`);
+              } }>
+              编辑
+            </button>
+          </td>
+        </tr>; })
+        }
+        </tbody>
     </table>;
     const emptyGrid = <div className="mt-4 bg-gray-100 border px-4 py-2 text-center text-gray-800 text-sm">
-      暂无数据
+      暂无代币
     </div>;
     return (
       <FrameLayout>
         <Tips/>
         <div className="p-6">
           <div className="p-2 bg-gray-200 rounded">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={ () => Router.push("/manage/account/add") }>
-              新建代理账户
+            <button className={ classnames("bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
+            tokens.length ? "opacity-50" : "") }
+            onClick={ () => {
+              if (!tokens.length) {
+                Router.push("/manage/token/new");
+              }
+              }}>
+              发行新的Token
+            </button>
+            <button className="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={ () => Router.push("/manage/token/exist") }>
+              关联现有Token
             </button>
           </div>
         </div>
+        { tokens.length ? grid : emptyGrid }
       </FrameLayout>
     );
   }

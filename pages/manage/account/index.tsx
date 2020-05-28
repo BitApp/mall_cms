@@ -40,7 +40,7 @@ class Index extends React.Component<IProps> {
     const { dispatch } = ctx.store;
     dispatch({type: ACTIONS.BUSY});
     const { name, token } = cookies(ctx);
-    const res = await getAxios().get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/agentaccount`, {
+    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/agentaccount`, {
       headers: {
         auth: `${name}:${token}`,
       },
@@ -80,13 +80,13 @@ class Index extends React.Component<IProps> {
               <a target="_blank" href={ `https://www.iostabc.com/account/${item.name}` }>{item.name}</a>
             </td>
             <td className="border px-4 py-2 text-center">
-              { item.block ? "激活" : "可用" }
+              { item.status }
             </td>
             <td className="border px-4 py-2 text-center">
-              <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+              <button disabled className="opacity-50 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                 禁用
               </button>
-              <button className="ml-4 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+              <button disabled className="opacity-50 ml-4 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                 取消代理身份
               </button>
             </td>

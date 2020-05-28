@@ -9,13 +9,15 @@ import { bindActionCreators, Dispatch } from "redux";
 import Tips from "../../../components/Tips";
 import { withTranslation } from "../../../i18n";
 import {
+  busy,
   closeAlert,
+  free,
   setWallet,
   showErrorMessage,
   showSuccessMessage,
 } from "../../../store/actions";
 import { getAxios } from "../../../utils/axios";
-import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL, PRODUCT_STATUS } from "../../../utils/constant";
+import { ACTIONS, API_URL, CONTRACT_ADDRESS, PRODUCT_STATUS, SERVER_API_URL, STATUS } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
 const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { ssr: false });
 import classnames from "classnames";
@@ -32,8 +34,13 @@ interface IProps extends WithTranslation {
   setWallet: (wallet: string) => Promise<void>;
   showSuccessMessage: (message: string) => void;
   showErrorMessage: (message: string) => void;
-  updateProducts: (products: [any]) => void;
   closeAlert: () => void;
+  busy: () => void;
+  free: () => void;
+}
+
+interface IState {
+  products: any[];
 }
 
 class Index extends React.Component<IProps> {
@@ -53,20 +60,25 @@ class Index extends React.Component<IProps> {
     };
   }
 
+  public state: IState = {
+    products: [],
+  };
+
   constructor(props) {
     super(props);
   }
 
   public componentDidMount() {
     this.initIwallet();
+    this.setState({products: this.props.products});
   }
 
   public render() {
     const {
     t,
     i18n,
-    isLoading,
-    products } = this.props;
+    isLoading } = this.props;
+    const { products } = this.state;
     const grid = <table className="table-auto w-full">
       <thead>
         <tr>
@@ -141,7 +153,9 @@ class Index extends React.Component<IProps> {
                 "hover:border-transparent hover:text-white hover:bg-red-500": item.status === PRODUCT_STATUS.OFFLINE,
                 "opacity-50": item.status !== PRODUCT_STATUS.OFFLINE,
               })
-              }>
+              } onClick={ () => {
+                this.deleteItem(item);
+              } }>
               删除
             </button>
           </td>
@@ -213,12 +227,42 @@ class Index extends React.Component<IProps> {
       });
     }
   }
+
+  public async deleteItem(item) {
+    if (confirm("确定删除" + item.name + "吗?")) {
+      try {
+        const result = await getAxios().get(`${API_URL}/cms/product/delete/${item._id}`);
+        if (result.data.code === STATUS.OK) {
+          alert("删除商品" + item.name + "成功");
+          await this.refresh();
+        } else {
+          this.props.showErrorMessage(result.data.msg);
+        }
+      } catch (e) {
+        this.props.showErrorMessage(e.message);
+      }
+    }
+  }
+
+  public async refresh() {
+    busy();
+    const res = await getAxios().get(`${ API_URL }/cms/products`);
+    const products = res.data.data;
+    // By returning { props: posts }, the Blog component
+    // will receive `posts` as a prop at build time
+    free();
+    this.setState({
+      products,
+    });
+  }
 }
 
 function mapDispatchToProps(dispatch: Dispatch<any>) {
   return bindActionCreators(
     {
+      busy,
       closeAlert,
+      free,
       setWallet,
       showErrorMessage,
       showSuccessMessage,

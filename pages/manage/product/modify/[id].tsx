@@ -239,29 +239,16 @@ class ModifyProduct extends React.Component<IProps, IState> {
                 </ImageUploading>
               </div>
             </div>
-            {/* <div className="-mx-3 mb-4">
+            <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   兑换Token
                 </label>
-                <label className="custom-checkbox-lable flex">
-                  <div className="bg-white border-2 rounded w-6 h-6 p-1 flex justify-center items-center mr-2 opacity-50">
-                    <input type="checkbox" className="hidden" checked={ iostSupport }
-                    onChange={(e) => e.preventDefault()} />
-                    <FontAwesomeIcon className="hidden w-4 h-4 text-green-600 pointer-events-none" icon={ faCheck }/>
-                  </div>
-                  <span className="select-none">IOST</span>
-                </label>
-                <label className="custom-checkbox-lable flex mt-2 cursor-pointer">
-                  <div className="bg-white border-2 rounded w-6 h-6 p-1 flex justify-center items-center mr-2">
-                    <input type="checkbox" className="hidden" checked={ ownTokenSupport }
-                    onChange={() => this.setState({ownTokenSupport: !ownTokenSupport})}/>
-                    <FontAwesomeIcon className="hidden w-4 h-4 text-green-600 pointer-events-none" icon={ faCheck }/>
-                  </div>
-                  <span className="select-none">OwnToken</span>
-                </label>
+                <select className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <option value="iost">IOST</option>
+                </select>
               </div>
-            </div> */}
+            </div>
             <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">

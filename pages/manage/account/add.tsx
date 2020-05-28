@@ -39,7 +39,7 @@ class AddAccount extends React.Component<IProps> {
     const { dispatch } = ctx.store;
     dispatch({type: ACTIONS.BUSY});
     const { name, token } = nextCookies(ctx);
-    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/account/agentaccount`, {
+    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/agentaccount`, {
       headers: {
         auth: `${name}:${token}`,
       },
@@ -79,7 +79,8 @@ class AddAccount extends React.Component<IProps> {
         <div className="p-6">
           <div className="p-2 border-gray-400 border-b-2 text-blue-600 cursor-pointer">
             <svg viewBox="0 0 20 20"
-            className="fill-current h-5 w-5 align-middle inline-block" onClick={ () => { Router.push("/manage/account") } }>
+            className="fill-current h-5 w-5 align-middle inline-block"
+            onClick={ () => { Router.push("/manage/account")} }>
               <path fill="#3182ce" d="M12.452,4.516c0.446,0.436,0.481,1.043,0,1.576L8.705,10l3.747,3.908c0.481,0.533,0.446,1.141,0,1.574  c-0.445,0.436-1.197,0.408-1.615,0c-0.418-0.406-4.502-4.695-4.502-4.695C6.112,10.57,6,10.285,6,10s0.112-0.57,0.335-0.789  c0,0,4.084-4.287,4.502-4.695C11.255,4.107,12.007,4.08,12.452,4.516z"/>
             </svg>
             <span className="align-middle ml-1">返回</span>
@@ -138,23 +139,45 @@ class AddAccount extends React.Component<IProps> {
     if (this.name &&
       this.password &&
       this.confirmPassword &&
-      confirm("确定创建账户")) {
-      if (this.password !== this.confirmPassword) {
-        this.props.showErrorMessage("两次密码必须一致");
-        return;
-      }
-      try {
-        const result = await getAxios().post(`${API_URL}/cms/auth/signup`, {
-          name: this.name,
-          parent: cookies.get("name"),
-          password: this.password,
-        });
-        if (result.data.code === "0") {
-          alert("创建账户" + this.name + "成功");
-          Router.push("/manage/account");
-        } else {
-          this.props.showErrorMessage(result.data.msg);
+        confirm("确定创建账户")) {
+        if (this.password !== this.confirmPassword) {
+          this.props.showErrorMessage("两次密码必须一致");
+          return;
         }
+        try {
+          const win = window as any;
+          const iost = win.IWalletJS.newIOST(IOST);
+          // const { wallet, t } = this.props;
+          const that = this;
+          const tx = iost.callABI(
+            CONTRACT_ADDRESS,
+            "addStore",
+            [
+              this.name,
+            ],
+          );
+          tx.gasLimit = 300000;
+          // tx.addApprove("iost", price.toString());
+          iost.signAndSend(tx).on("pending", (trx) => {
+            console.info(trx);
+          })
+          .on("success", async (result) => {
+            // 刷新数据
+            const res = await getAxios().post(`${API_URL}/cms/auth/signup`, {
+              name: this.name,
+              parent: cookies.get("name"),
+              password: this.password,
+            });
+            if (!res.data.code) {
+              alert("创建账户" + this.name + "成功");
+              Router.push("/manage/account");
+            } else {
+              that.props.showErrorMessage(res.data.msg);
+            }
+        })
+        .on("failed", (failed) => {
+          that.props.showErrorMessage(chainErrorMessage(failed));
+        });
       } catch (e) {
         this.props.showErrorMessage(e.message);
       }

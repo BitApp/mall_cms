@@ -48,9 +48,15 @@ export const CATEGORIES_MAP = {
   KNOWLEDGE : "知识付费",
   MAKEUP : "美妆",
   OTHER : "其他",
-};
+}
 
 export enum PRODUCT_STATUS {
+  OFFLINE = "OFFLINE",
+  ONCHAIN = "ONCHAIN",
+  DELETED = "DELETED",
+}
+
+export enum ACCOUNT_STATUS {
   OFFLINE = "OFFLINE",
   ONCHAIN = "ONCHAIN",
   DELETED = "DELETED",
