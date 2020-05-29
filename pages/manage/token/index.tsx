@@ -65,16 +65,16 @@ class Index extends React.Component<IProps> {
       t,
       i18n,
       isLoading,
+      wallet,
       tokens } = this.props;
     const grid = <table className="table-auto w-full">
         <thead>
           <tr>
             <th className="px-4 py-2">代币</th>
             <th className="px-4 py-2">精度</th>
-            <th className="px-4 py-2">回购</th>
+            <th className="px-4 py-2">总量</th>
+            <th className="px-4 py-2">回购价格</th>
             <th className="px-4 py-2">回购余额</th>
-            <th className="px-4 py-2">回购比例</th>
-            <th className="px-4 py-2">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -87,22 +87,35 @@ class Index extends React.Component<IProps> {
           { item.decimal }
           </td>
           <td className="border px-4 py-2 text-center">
-          { item.token }
+          { item.totalSupply }
           </td>
-          <td className="border px-4 py-2 text-center">
-          { item.quantity }
-          </td>
-          <td className="border px-4 py-2 text-center">
-          { item.status }
-          </td>
-          <td className="border px-4 py-2 text-center">
+          {
+            item.repoRate && <td className="border px-4 py-2 text-center">
+            <span>1 { item.symbol } = { item.repoRate } IOST</span>
             <button className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
               onClick={ () => {
-                Router.push(`/manage/token/modify/${item._id}`);
+                Router.push(`/manage/token/modify/${item.symbol}`);
               } }>
-              编辑
+              配置
             </button>
-          </td>
+            </td>
+          }
+          {
+            !item.repoRate && <td className="border px-4 py-2 text-center">
+              <button className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
+                onClick={ () => {
+                  Router.push(`/manage/token/modify/${item.symbol}`);
+                } }>
+                配置
+              </button>
+            </td>
+          }
+          {
+            <td className="border px-4 py-2 text-center">
+            { item.repoBalance || 0 }
+            <span className="ml-1 text-green-600">(可使用任何钱包给账户{wallet}转账)</span>
+            </td>
+          }
         </tr>; })
         }
         </tbody>
@@ -124,7 +137,8 @@ class Index extends React.Component<IProps> {
               }}>
               发行新的Token
             </button>
-            <button className="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            <button className={ classnames("bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4",
+            tokens.length ? "opacity-50" : "") }
             onClick={ () => Router.push("/manage/token/exist") }>
               关联现有Token
             </button>
