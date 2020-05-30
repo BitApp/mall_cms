@@ -2,14 +2,12 @@
 import { faCheck, faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import IOST from "iost";
-import cookies from "js-cookie";
 import { WithTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Router from "next/router";
 import React from "react";
 import ImageUploading from "react-images-uploading";
 import { connect } from "react-redux";
-import ReactTags from "react-tag-autocomplete";
 import { bindActionCreators, Dispatch } from "redux";
 import Tips from "../../../components/Tips";
 import { withTranslation } from "../../../i18n";
@@ -42,16 +40,10 @@ interface IProps extends WithTranslation {
 
 interface IState {
   name: string;
-  desc: string;
-  tags: any[];
-  suggestions: any[];
-  images: any[];
-  token: string;
-  price: number;
-  quantity: number;
+  images: string[];
 }
 
-class AddProduct extends React.Component<IProps, IState> {
+class AddStore extends React.Component<IProps, IState> {
   public static async getInitialProps(ctx) {
     return {
       namespacesRequired: ["common"],
@@ -59,14 +51,8 @@ class AddProduct extends React.Component<IProps, IState> {
   }
 
   public state: IState = {
-    desc: "",
     images: [],
     name: "",
-    price: 1,
-    quantity: 1,
-    suggestions: [],
-    tags: [],
-    token: "iost",
   };
 
   constructor(props) {
@@ -75,22 +61,10 @@ class AddProduct extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     this.initIwallet();
-    const suggestions: any[] = [];
-    let id = 1;
-    for (const name in CATEGORIES) {
-      if (name) {
-        suggestions.push({
-          id,
-          name: CATEGORIES_MAP[name],
-        });
-        id ++;
-      }
-    }
-    this.setState({ suggestions });
   }
 
   public render() {
-    const { tags, name, desc, suggestions, price, quantity } = this.state;
+    const { name } = this.state;
     const {
       t,
       i18n,
@@ -120,7 +94,7 @@ class AddProduct extends React.Component<IProps, IState> {
             <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  商品名称
+                  店铺名称
                 </label>
                 <input
                 autoFocus
@@ -134,37 +108,9 @@ class AddProduct extends React.Component<IProps, IState> {
             <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  商品描述
+                  店铺封面
                 </label>
-                <input onChange={(evt) => { this.setState({ desc: evt.target.value.trim() }); }} value={desc} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品描述"/>
-              </div>
-            </div>
-            <div className="-mx-3 mb-4">
-              <div className="w-full px-3">
-                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  商品类别
-                </label>
-                <ReactTags
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  tags={ tags }
-                  suggestions = { suggestions }
-                  handleDelete={ this.handleDelete.bind(this) }
-                  handleAddition={ this.handleAddition.bind(this) } />
-                <p className="text-xs mt-2">
-                  { suggestions.map((item, index) =>
-                    <a key={item.id} onClick={() => {this.handleAddition(item); }} className="mr-1 mb-1 cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center rounded-full">
-                      { item.name }
-                    </a> )
-                  }
-                </p>
-              </div>
-            </div>
-            <div className="-mx-3 mb-4">
-              <div className="w-full px-3">
-                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  商品图片
-                </label>
-                <ImageUploading multiple maxFileSize={maxMbFileSize} onChange={onChange} maxNumber={maxNumber}>
+                <ImageUploading maxFileSize={maxMbFileSize} onChange={onChange} maxNumber={maxNumber}>
                   {({ imageList, onImageUpload, onImageRemoveAll }) => (
                     // write your building UI
                     <div className="upload__image-wrapper">
@@ -183,11 +129,11 @@ class AddProduct extends React.Component<IProps, IState> {
                                   onClick={() => {
                                     image.onUpdate();
                                   }} >
-                                  <FontAwesomeIcon icon={faPenSquare} />
+                                  <FontAwesomeIcon className="w-4" icon={faPenSquare} />
                                 </a>
                                 <a className="cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center ml-2"
                                   onClick={image.onRemove} >
-                                  <FontAwesomeIcon icon={faTrash} />
+                                  <FontAwesomeIcon className="w-4" icon={faTrash} />
                                 </a>
                               </div>
                           </div>
@@ -198,51 +144,11 @@ class AddProduct extends React.Component<IProps, IState> {
                 </ImageUploading>
               </div>
             </div>
-            <div className="-mx-3 mb-4">
-              <div className="w-full px-3">
-                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  兑换Token
-                </label>
-                <select className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                  <option value="iost">IOST</option>
-                </select>
-              </div>
-            </div>
-            <div className="-mx-3 mb-4">
-              <div className="w-full px-3">
-                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  价格
-                </label>
-                <input
-                onChange={(evt) => { this.setState({ price: Number(evt.target.value.trim()) }); }}
-                value={price}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="number"
-                min="1"
-                step="100"
-                placeholder="价格"/>
-              </div>
-            </div>
-            <div className="-mx-3 mb-4">
-              <div className="w-full px-3">
-                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  库存
-                </label>
-                <input
-                onChange={(evt) => { this.setState({ quantity: Number(evt.target.value.trim()) }); }}
-                value={quantity}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="number"
-                min="1"
-                step="1"
-                placeholder="库存"/>
-              </div>
-            </div>
             <div className="-mx-3 mt-8">
               <div className="w-full px-3">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={(evt) => this.createProduct(evt)}>
-                创建兑换商品
+              onClick={(evt) => this.createStore(evt)}>
+                创建店铺
               </button>
               </div>
             </div>
@@ -252,38 +158,19 @@ class AddProduct extends React.Component<IProps, IState> {
     );
   }
 
-  public handleAddition(tag) {
-    const originTags = this.state.tags;
-    const tags = originTags.concat([], tag);
-    this.setState({ tags });
-  }
-
-  public handleDelete(i) {
-    const tags = this.state.tags.slice(0);
-    tags.splice(i, 1);
-    this.setState({ tags });
-  }
-
-  public async createProduct(evt) {
+  public async createStore(evt) {
     evt.preventDefault();
     if (this.state.name &&
-      this.state.desc &&
-      this.state.tags.length &&
       this.state.images.length) {
-      if (confirm("确定创建商品?")) {
+      if (confirm("确定创建店铺?")) {
         try {
-          const result = await getAxios().post(`${API_URL}/cms/product/add`, {
-            desc: this.state.desc,
+          const result = await getAxios().post(`${API_URL}/cms/store/add`, {
             imgs: this.state.images,
-            token: this.state.token,
             name: this.state.name,
-            price: this.state.price,
-            quantity: this.state.quantity,
-            types: this.state.tags,
           });
           if (result.data.code === STATUS.OK) {
-            alert("创建商品" + this.state.name + "成功");
-            Router.push("/manage/product");
+            alert("创建店铺" + this.state.name + "成功");
+            Router.push("/manage/store");
           } else {
             this.props.showErrorMessage(result.data.msg);
           }
@@ -331,4 +218,4 @@ function mapStateToProps(state: any) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withTranslation("common")(AddProduct));
+)(withTranslation("common")(AddStore));

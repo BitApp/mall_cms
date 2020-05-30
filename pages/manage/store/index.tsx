@@ -21,7 +21,7 @@ import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from ".
 import { chainErrorMessage } from "../../../utils/helper";
 
 interface IProps extends WithTranslation {
-  tokens: [any];
+  stores: [any];
   errorMessage: string;
   showError: boolean;
   showSuccess: boolean;
@@ -41,14 +41,14 @@ class Index extends React.Component<IProps> {
     const isServer = !!ctx.req;
     const { dispatch } = ctx.store;
     dispatch({type: ACTIONS.BUSY});
-    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/token`);
-    const token = res.data.data;
+    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/cms/stores`);
+    const stores = res.data.data;
     // By returning { props: posts }, the Blog component
     // will receive `posts` as a prop at build time
     dispatch({ type: ACTIONS.FREE });
     return {
       namespacesRequired: ["common"],
-      tokens: token ? [token] : [],
+      stores,
     };
   }
 
@@ -66,84 +66,63 @@ class Index extends React.Component<IProps> {
       i18n,
       isLoading,
       wallet,
-      tokens } = this.props;
+      stores } = this.props;
     const grid = <table className="table-auto w-full">
         <thead>
           <tr>
+            <th className="px-4 py-2">店铺</th>
+            <th className="px-4 py-2">封面</th>
             <th className="px-4 py-2">代币</th>
-            <th className="px-4 py-2">精度</th>
-            <th className="px-4 py-2">总量</th>
-            <th className="px-4 py-2">回购价格</th>
-            <th className="px-4 py-2">回购余额</th>
+            <th className="px-4 py-2">操作</th>
           </tr>
         </thead>
         <tbody>
-        { tokens.map((item: any, index) => {
+        { stores.map((item: any, index) => {
         return <tr key={index}>
           <td className="border px-4 py-2 text-center">
-          { item.symbol }
+          { item.name }
           </td>
           <td className="border px-4 py-2 text-center">
-          { item.decimal }
+          { item.imgs.map((it, id) => (
+            <img className="mr-1" width="80" key={id} src={it}/>
+          )) }
           </td>
           <td className="border px-4 py-2 text-center">
-          { item.totalSupply }
+          <a onClick={() => { Router.push(`/manage/token`); }} className="text-blue-500 cursor-hand">
+            { item.token[0] ? item.token[0].symbol : "" }
+            </a>
           </td>
-          {
-            item.repoRate && <td className="border px-4 py-2 text-center">
-            <span>1 { item.symbol } = { item.repoRate } IOST</span>
+          <td className="border px-4 py-2 text-center">
             <button className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
               onClick={ () => {
-                Router.push(`/manage/token/modify/${item.symbol}`);
+                Router.push(`/manage/store/modify/${item._id}`);
               } }>
               配置
             </button>
-            </td>
-          }
-          {
-            !item.repoRate && <td className="border px-4 py-2 text-center">
-              <button className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
-                onClick={ () => {
-                  Router.push(`/manage/token/modify/${item.symbol}`);
-                } }>
-                配置
-              </button>
-            </td>
-          }
-          {
-            <td className="border px-4 py-2 text-center">
-            { item.repoBalance || 0 }
-            <span className="ml-1 text-green-600">(可使用任何钱包给账户{wallet}转账)</span>
-            </td>
-          }
+          </td>
         </tr>; })
         }
         </tbody>
     </table>;
     const emptyGrid = <div className="mt-4 bg-gray-100 border px-4 py-2 text-center text-gray-800 text-sm">
-      暂无代币
+      暂无店铺
     </div>;
     return (
       <FrameLayout>
         <Tips/>
         <div className="p-6">
-          <div className="p-2 bg-gray-200 rounded">
+        <div className="p-2 bg-gray-200 rounded">
             <button className={ classnames("bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
-            tokens.length ? "opacity-50" : "") }
+            stores.length ? "opacity-50" : "") }
             onClick={ () => {
-              if (!tokens.length) {
-                Router.push("/manage/token/new");
+              if (!stores.length) {
+                Router.push("/manage/store/new");
               }
               }}>
-              发行新的Token
-            </button>
-            <button className={ classnames("bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4",
-            tokens.length ? "opacity-50" : "") }
-            onClick={ () => Router.push("/manage/token/exist") }>
-              关联现有Token
+              新建店铺
             </button>
           </div>
-          { tokens.length ? grid : emptyGrid }
+          { stores.length ? grid : emptyGrid }
         </div>
       </FrameLayout>
     );

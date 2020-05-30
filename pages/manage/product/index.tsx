@@ -172,7 +172,7 @@ class Index extends React.Component<IProps> {
         <div className="p-6">
           <div className="p-2 bg-gray-200 rounded">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={ () => Router.push("/manage/product/add") }>
+            onClick={ () => Router.push("/manage/product/new") }>
               新增商品
             </button>
           </div>
