@@ -113,8 +113,8 @@ class Index extends React.Component<IProps> {
 
   public async login(e) {
     const res = await axios.post(`${API_URL}/cms/auth/signin`, {
-      name: this.name,
-      password: this.password,
+      name: this.name.trim(),
+      password: this.password.trim(),
     });
     if (res.data.code === STATUS.OK) {
       // save token to cookie
