@@ -70,7 +70,7 @@ class NewToken extends React.Component<IProps, IState> {
         <Tips/>
         <div className="p-6">
           <div className="p-2 border-gray-400 border-b-2 text-blue-600 cursor-pointer" >
-            <span onClick={ () => { Router.push("/manage/product"); } }>
+            <span onClick={ () => { Router.push("/manage/token"); } }>
               <svg viewBox="0 0 20 20"
               className="fill-current h-5 w-5 align-middle inline-block">
                 <path fill="#3182ce" d="M12.452,4.516c0.446,0.436,0.481,1.043,0,1.576L8.705,10l3.747,3.908c0.481,0.533,0.446,1.141,0,1.574  c-0.445,0.436-1.197,0.408-1.615,0c-0.418-0.406-4.502-4.695-4.502-4.695C6.112,10.57,6,10.285,6,10s0.112-0.57,0.335-0.789  c0,0,4.084-4.287,4.502-4.695C11.255,4.107,12.007,4.08,12.452,4.516z"/>
@@ -152,7 +152,7 @@ class NewToken extends React.Component<IProps, IState> {
   public async associateToken(evt) {
     evt.preventDefault();
     if (this.state.symbol) {
-      if (confirm("确定绑定Token?")) {
+      if (confirm(`确定绑定${this.state.symbol}?`)) {
         const win = window as any;
         const iost = win.IWalletJS.newIOST(IOST);
         // const { wallet, t } = this.props;
@@ -161,7 +161,7 @@ class NewToken extends React.Component<IProps, IState> {
           CONTRACT_ADDRESS,
           "setToken",
           [
-            this.state.symbol
+            this.state.symbol,
           ],
         );
         tx.gasLimit = 300000;

@@ -1,4 +1,5 @@
 import axios from "axios";
+import classnames from "classnames";
 import IOST from "iost";
 import cookies from "next-cookies";
 import { WithTranslation } from "next-i18next";
@@ -18,7 +19,6 @@ import {
 import { getAxios } from "../../../utils/axios";
 import { ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL } from "../../../utils/constant";
 import { chainErrorMessage } from "../../../utils/helper";
-import classnames from "classnames";
 
 interface IProps extends WithTranslation {
   tokens: [any];
