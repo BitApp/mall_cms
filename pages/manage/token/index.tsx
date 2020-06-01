@@ -139,7 +139,11 @@ class Index extends React.Component<IProps> {
             </button>
             <button className={ classnames("bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4",
             tokens.length ? "opacity-50" : "") }
-            onClick={ () => Router.push("/manage/token/exist") }>
+            onClick={ () => {
+              if (!tokens.length) {
+                Router.push("/manage/token/exist");
+              }
+            }}>
               关联现有Token
             </button>
           </div>
