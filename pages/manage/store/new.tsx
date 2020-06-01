@@ -41,6 +41,10 @@ interface IProps extends WithTranslation {
 interface IState {
   name: string;
   images: string[];
+  sellerWechat: string;
+  seller: string;
+  sellerAccount: string;
+  sellerMobile: string;
 }
 
 class AddStore extends React.Component<IProps, IState> {
@@ -53,6 +57,10 @@ class AddStore extends React.Component<IProps, IState> {
   public state: IState = {
     images: [],
     name: "",
+    seller: "",
+    sellerWechat: "",
+    sellerAccount: "",
+    sellerMobile: "",
   };
 
   constructor(props) {
@@ -64,7 +72,7 @@ class AddStore extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { name } = this.state;
+    const { name, seller, sellerAccount, sellerMobile, sellerWechat } = this.state;
     const {
       t,
       i18n,
@@ -142,6 +150,50 @@ class AddStore extends React.Component<IProps, IState> {
                     </div>
                   )}
                 </ImageUploading>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  卖家
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ seller: evt.target.value.trim() }); }}
+                value={seller}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="卖家名"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  卖家电话
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ sellerMobile: evt.target.value.trim() }); }}
+                value={ sellerMobile}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="卖家电话"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  卖家IOST账户
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ sellerAccount: evt.target.value.trim() }); }}
+                value={ sellerAccount}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="IOST账户"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  卖家微信
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ sellerWechat: evt.target.value.trim() }); }}
+                value={ sellerWechat}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="卖家微信"/>
               </div>
             </div>
             <div className="-mx-3 mt-8">

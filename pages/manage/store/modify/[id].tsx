@@ -44,6 +44,10 @@ interface IState {
   defaultImages: [];
   name: string;
   images: any[];
+  sellerWechat: string;
+  seller: string;
+  sellerAccount: string;
+  sellerMobile: string;
 }
 
 class ModifyStore extends React.Component<IProps, IState> {
@@ -68,6 +72,10 @@ class ModifyStore extends React.Component<IProps, IState> {
     defaultImages: [],
     images: [],
     name: "",
+    seller: "",
+    sellerWechat: "",
+    sellerAccount: "",
+    sellerMobile: "",
   };
 
   constructor(props) {
@@ -83,7 +91,7 @@ class ModifyStore extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { name, images, defaultImages } = this.state;
+    const { name, images, defaultImages, seller, sellerAccount, sellerMobile, sellerWechat } = this.state;
     const {
       t,
       i18n,
@@ -181,6 +189,50 @@ class ModifyStore extends React.Component<IProps, IState> {
                 </ImageUploading>
               </div>
             </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  卖家
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ seller: evt.target.value.trim() }); }}
+                value={seller}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="卖家名"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  卖家电话
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ sellerMobile: evt.target.value.trim() }); }}
+                value={ sellerMobile}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="卖家电话"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  卖家IOST账户
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ sellerAccount: evt.target.value.trim() }); }}
+                value={ sellerAccount}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="IOST账户"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  卖家微信
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ sellerWechat: evt.target.value.trim() }); }}
+                value={ sellerWechat}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="卖家微信"/>
+              </div>
+            </div>
             <div className="-mx-3 mt-8">
               <div className="w-full px-3">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -203,6 +255,10 @@ class ModifyStore extends React.Component<IProps, IState> {
           const result = await getAxios().post(`${API_URL}/cms/store/modify/${this.props.id}`, {
             imgs: this.state.images,
             name: this.state.name,
+            seller: this.state.seller,
+            sellerAccount: this.state.sellerAccount,
+            sellerMobile: this.state.sellerMobile,
+            sellerWechat: this.state.sellerWechat,
           });
           if (result.data.code === STATUS.OK) {
             alert("修改店铺" + this.state.name + "成功");

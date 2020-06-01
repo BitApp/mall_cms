@@ -80,7 +80,7 @@ class Index extends React.Component<IProps> {
         { stores.map((item: any, index) => {
         return <tr key={index}>
           <td className="border px-4 py-2 text-center">
-          { item.name }
+            { item.name }
           </td>
           <td className="border px-4 py-2 text-center">
           { item.imgs.map((it, id) => (
@@ -88,7 +88,7 @@ class Index extends React.Component<IProps> {
           )) }
           </td>
           <td className="border px-4 py-2 text-center">
-          <a onClick={() => { Router.push(`/manage/token`); }} className="text-blue-500 cursor-hand">
+            <a onClick={() => { Router.push(`/manage/token`); }} className="text-blue-500 cursor-hand">
             { item.token[0] ? item.token[0].symbol : "" }
             </a>
           </td>

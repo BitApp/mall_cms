@@ -27,6 +27,7 @@ const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { 
 import "../../../styles/react-tags.scss";
 
 interface IProps extends WithTranslation {
+  token: string;
   agentAccounts: [any];
   errorMessage: string;
   showError: boolean;
@@ -66,14 +67,14 @@ class AddProduct extends React.Component<IProps, IState> {
     quantity: 1,
     suggestions: [],
     tags: [],
-    token: "iost",
+    token: "",
   };
 
   constructor(props) {
     super(props);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     this.initIwallet();
     const suggestions: any[] = [];
     let id = 1;
@@ -86,11 +87,12 @@ class AddProduct extends React.Component<IProps, IState> {
         id ++;
       }
     }
-    this.setState({ suggestions });
+    const res = await getAxios().get(`${ API_URL }/cms/account/token`);
+    this.setState({ suggestions, token: res.data.data.symbol });
   }
 
   public render() {
-    const { tags, name, desc, suggestions, price, quantity } = this.state;
+    const { tags, name, desc, suggestions, price, quantity, token } = this.state;
     const {
       t,
       i18n,
@@ -204,7 +206,8 @@ class AddProduct extends React.Component<IProps, IState> {
                   兑换Token
                 </label>
                 <select className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                  <option value="iost">IOST</option>
+                  <option value="iost">iost</option>
+                  {token && <option value={token}>{token}</option>}
                 </select>
               </div>
             </div>
