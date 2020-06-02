@@ -4,6 +4,7 @@ import { WithTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Router from "next/router";
 import React from "react";
+import Modal from "react-modal";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import Tips from "../../../components/Tips";
@@ -41,6 +42,9 @@ interface IProps extends WithTranslation {
 
 interface IState {
   products: any[];
+  showQuantityModal: boolean;
+  currentProduct: any;
+  quantity: number;
 }
 
 class Index extends React.Component<IProps> {
@@ -61,7 +65,10 @@ class Index extends React.Component<IProps> {
   }
 
   public state: IState = {
+    currentProduct: null,
     products: [],
+    quantity: 1,
+    showQuantityModal: false,
   };
 
   constructor(props) {
@@ -78,7 +85,18 @@ class Index extends React.Component<IProps> {
     t,
     i18n,
     isLoading } = this.props;
-    const { products } = this.state;
+    const { products, showQuantityModal, quantity } = this.state;
+    const customStyles = {
+      content : {
+        top                   : "30%",
+        left                  : "50%",
+        right                 : "auto",
+        bottom                : "auto",
+        width                 : "300px",
+        marginRight           : "-50%",
+        transform             : "translate(-50%, -50%)",
+      },
+    };
     const grid = <table className="table-auto w-full">
       <thead>
         <tr>
@@ -149,7 +167,8 @@ class Index extends React.Component<IProps> {
             </button>
             { item.status !== PRODUCT_STATUS.OFFLINE && <button className={
               classnames("bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500")
-              } onClick={ () => {} }>
+              } onClick={ () => this.setState({ showQuantityModal: true, currentProduct: item, quantity: item.quantity})}
+              >
               更新库存
             </button> }
             <button disabled={ item.status !== PRODUCT_STATUS.OFFLINE } className={
@@ -174,6 +193,41 @@ class Index extends React.Component<IProps> {
     return (
       <FrameLayout>
         <Tips/>
+        <Modal
+          isOpen={ showQuantityModal }
+          // onAfterOpen={afterOpenModal}
+          // onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+        >
+          <form>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                库存
+              </label>
+              <input
+              value={ quantity }
+              onChange={
+                (evt) => {
+                  this.setState({quantity: evt.target.value.trim()});
+                }
+              } className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" min="0" placeholder="库存"/>
+            </div>
+            <div className="flex items-center justify-between">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onClick={
+                () => {
+                  this.updateQuantity();
+                }
+              }>
+                修改
+              </button>
+              <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
+              onClick={() => this.setState({ showQuantityModal: false})}>
+                取消
+              </a>
+            </div>
+          </form>
+        </Modal>
         <div className="p-6">
           <div className="p-2 bg-gray-200 rounded">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -231,6 +285,34 @@ class Index extends React.Component<IProps> {
         that.props.showErrorMessage(chainErrorMessage(failed));
       });
     }
+  }
+
+  public updateQuantity() {
+    const win = window as any;
+    const iost = win.IWalletJS.newIOST(IOST);
+    const { currentProduct, quantity } = this.state;
+    const that = this;
+    const tx = iost.callABI(
+      CONTRACT_ADDRESS,
+      "modifyInventory",
+      [
+        currentProduct._id,
+        quantity,
+      ],
+    );
+    tx.gasLimit = 300000;
+    // tx.addApprove("iost", price.toString());
+    iost.signAndSend(tx).on("pending", (trx) => {
+      console.info(trx);
+    })
+    .on("success", (result) => {
+      // 刷新数据
+      that.props.showSuccessMessage("库存更新成功");
+      that.setState({showQuantityModal: false});
+    })
+    .on("failed", (failed) => {
+      that.props.showErrorMessage(chainErrorMessage(failed));
+    });
   }
 
   public async deleteItem(item) {
