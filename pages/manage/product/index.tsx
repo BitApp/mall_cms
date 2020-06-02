@@ -147,11 +147,11 @@ class Index extends React.Component<IProps> {
               } }>
               编辑
             </button>
-            <button className={
+            { item.status !== PRODUCT_STATUS.OFFLINE && <button className={
               classnames("bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500")
               } onClick={ () => {} }>
               更新库存
-            </button>
+            </button> }
             <button disabled={ item.status !== PRODUCT_STATUS.OFFLINE } className={
               classnames("bg-transparent text-red-700 font-semibold py-2 px-4 border border-red-500 rounded ml-2",
               {
