@@ -219,6 +219,10 @@ class AddStore extends React.Component<IProps, IState> {
           const result = await getAxios().post(`${API_URL}/cms/store/add`, {
             imgs: this.state.images,
             name: this.state.name,
+            seller: this.state.seller,
+            sellerAccount: this.state.sellerAccount,
+            sellerMobile: this.state.sellerMobile,
+            sellerWechat: this.state.sellerWechat,
           });
           if (result.data.code === STATUS.OK) {
             alert("创建店铺" + this.state.name + "成功");
