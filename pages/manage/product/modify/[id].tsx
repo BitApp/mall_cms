@@ -49,6 +49,7 @@ interface IState {
   images: any[];
   defaultImages: any[];
   token: string;
+  storeToken: string;
   price: number;
   quantity: number;
 }
@@ -80,14 +81,15 @@ class ModifyProduct extends React.Component<IProps, IState> {
     quantity: 1,
     suggestions: [],
     tags: [],
-    token: "iost",
+    token: "",
+    storeToken: "",
   };
 
   constructor(props) {
     super(props);
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     this.initIwallet();
     const suggestions: any[] = [];
     let id = 1;
@@ -100,6 +102,7 @@ class ModifyProduct extends React.Component<IProps, IState> {
         id ++;
       }
     }
+    const res = await getAxios().get(`${ API_URL }/cms/account/token`);
     this.setState({
       defaultImages: this.props.product.imgs,
       desc: this.props.product.desc,
@@ -109,11 +112,12 @@ class ModifyProduct extends React.Component<IProps, IState> {
       suggestions,
       tags: this.props.product.types,
       token: this.props.product.token,
+      storeToken: res.data.data.symbol,
     });
   }
 
   public render() {
-    const { tags, name, desc, suggestions, token, images, price, quantity, defaultImages } = this.state;
+    const { tags, name, desc, suggestions, token, storeToken, images, price, quantity, defaultImages } = this.state;
     const {
       t,
       i18n,
@@ -204,11 +208,11 @@ class ModifyProduct extends React.Component<IProps, IState> {
                                   onClick={() => {
                                     image.onUpdate();
                                   }} >
-                                  <FontAwesomeIcon icon={faPenSquare} />
+                                  <FontAwesomeIcon className="w-4" icon={faPenSquare} />
                                 </a>
                                 <a className="cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center ml-2"
                                   onClick={image.onRemove} >
-                                  <FontAwesomeIcon icon={faTrash} />
+                                  <FontAwesomeIcon className="w-4" icon={faTrash} />
                                 </a>
                               </div>
                           </div>
@@ -228,7 +232,7 @@ class ModifyProduct extends React.Component<IProps, IState> {
                                       });
                                     }
                                   } >
-                                  <FontAwesomeIcon icon={faTrash} />
+                                  <FontAwesomeIcon className="w-4" icon={faTrash} />
                                 </a>
                               </div>
                           </div>
@@ -244,8 +248,9 @@ class ModifyProduct extends React.Component<IProps, IState> {
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   兑换Token
                 </label>
-                <select className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                  <option value="iost">IOST</option>
+                <select value={token} onChange={(e) => this.setState({token: e.target.value})} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <option value="iost">iost</option>
+                  {storeToken && <option value={storeToken}>{storeToken}</option>}
                 </select>
               </div>
             </div>

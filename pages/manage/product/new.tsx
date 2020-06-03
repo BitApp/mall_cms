@@ -48,6 +48,7 @@ interface IState {
   suggestions: any[];
   images: any[];
   token: string;
+  storeToken: string;
   price: number;
   quantity: number;
 }
@@ -68,6 +69,7 @@ class AddProduct extends React.Component<IProps, IState> {
     suggestions: [],
     tags: [],
     token: "",
+    storeToken: "",
   };
 
   constructor(props) {
@@ -88,11 +90,11 @@ class AddProduct extends React.Component<IProps, IState> {
       }
     }
     const res = await getAxios().get(`${ API_URL }/cms/account/token`);
-    this.setState({ suggestions, token: res.data.data.symbol });
+    this.setState({ suggestions, storeToken: res.data.data.symbol });
   }
 
   public render() {
-    const { tags, name, desc, suggestions, price, quantity, token } = this.state;
+    const { tags, name, desc, suggestions, price, quantity, token, storeToken } = this.state;
     const {
       t,
       i18n,
@@ -205,9 +207,9 @@ class AddProduct extends React.Component<IProps, IState> {
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   兑换Token
                 </label>
-                <select className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                <select onChange={(e) => this.setState({token: e.target.value})} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                   <option value="iost">iost</option>
-                  {token && <option value={token}>{token}</option>}
+                  {storeToken && <option value={storeToken}>{storeToken}</option>}
                 </select>
               </div>
             </div>
