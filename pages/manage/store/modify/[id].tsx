@@ -1,5 +1,5 @@
 // import nextCookies from "next-cookies";
-import { faCheck, faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import IOST from "iost";
 import { WithTranslation } from "next-i18next";
