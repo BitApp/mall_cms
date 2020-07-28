@@ -15,7 +15,7 @@ import {
   showSuccessMessage,
 } from "../../../../store/actions";
 import { getAxios } from "../../../../utils/axios";
-import { API_URL, CATEGORIES, CATEGORIES_MAP, CONTRACT_ADDRESS, STATUS } from "../../../../utils/constant";
+import { API_URL, CATEGORIES, CATEGORIES_MAP, CONTRACT_ADDRESS, STATUS, ACTIONS, SERVER_API_URL } from "../../../../utils/constant";
 import { chainErrorMessage } from "../../../../utils/helper";
 const FrameLayout = dynamic(() => import("../../../../components/FrameLayout"),  { ssr: false });
 
@@ -27,6 +27,7 @@ interface IProps extends WithTranslation {
   successMessage: string;
   isLoading: boolean;
   wallet: string;
+  token: any;
   setWallet: (wallet: string) => Promise<void>;
   showSuccessMessage: (message: string) => void;
   showErrorMessage: (message: string) => void;
@@ -39,10 +40,17 @@ interface IState {
 
 class ModifyToken extends React.Component<IProps, IState> {
   public static async getInitialProps(ctx) {
+    const isServer = !!ctx.req;
     const id = ctx.query.id;
+    const { dispatch } = ctx.store;
+    dispatch({type: ACTIONS.BUSY});
+    const res = await getAxios(ctx).get(`${ isServer ? SERVER_API_URL : API_URL }/cms/account/token`);
+    const token = res.data.data;
+    dispatch({ type: ACTIONS.FREE });
     return {
       id,
       namespacesRequired: ["common"],
+      token,
     };
   }
 
@@ -64,6 +72,7 @@ class ModifyToken extends React.Component<IProps, IState> {
       t,
       i18n,
       isLoading,
+      token,
       id } = this.props;
     return (
       <FrameLayout>
@@ -87,12 +96,13 @@ class ModifyToken extends React.Component<IProps, IState> {
                 <input
                 autoFocus
                 onChange={(evt) => { this.setState({ repoRate: Number(evt.target.value) }); }}
-                value={repoRate}
                 maxLength={6}
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
+                value={token.repoRate}
                 placeholder="回购价格"/>
-                <p className="text-gray-600 text-xs italic">回购价格表示 1 {id} = {repoRate} IOST</p>
+                {repoRate > 0 &&
+                <p className="text-gray-600 text-xs italic">回购价格表示 1 IOST = { repoRate } {id} </p> }
               </div>
             </div>
             <div className="-mx-3 mt-8">
@@ -112,7 +122,7 @@ class ModifyToken extends React.Component<IProps, IState> {
   public async setRepoRate(evt) {
     evt.preventDefault();
     if (this.state.repoRate > 0) {
-      if (confirm("确定设置回购价格为" + this.state.repoRate + "吗")) {
+      if (confirm("确定设置回购价格为 1 IOST = " + this.state.repoRate + " " + this.props.id + " 吗")) {
         const win = window as any;
         const iost = win.IWalletJS.newIOST(IOST);
         // const { wallet, t } = this.props;
@@ -121,7 +131,7 @@ class ModifyToken extends React.Component<IProps, IState> {
           CONTRACT_ADDRESS,
           "setRepoRate",
           [
-            this.state.repoRate.toString(),
+            Number((1 / this.state.repoRate).toFixed(8)).toString(),
           ],
         );
         tx.gasLimit = 300000;

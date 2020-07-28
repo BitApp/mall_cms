@@ -1,8 +1,6 @@
-// import nextCookies from "next-cookies";
 import { faCheck, faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import IOST from "iost";
-import cookies from "js-cookie";
+import classnames from "classnames";
 import { WithTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Router from "next/router";
@@ -21,7 +19,7 @@ import {
 } from "../../../store/actions";
 import { getAxios } from "../../../utils/axios";
 import { API_URL, CATEGORIES, CATEGORIES_MAP, STATUS } from "../../../utils/constant";
-import { chainErrorMessage } from "../../../utils/helper";
+import { chainErrorMessage, isEmpty } from "../../../utils/helper";
 const FrameLayout = dynamic(() => import("../../../components/FrameLayout"),  { ssr: false });
 
 import "../../../styles/react-tags.scss";
@@ -49,8 +47,9 @@ interface IState {
   images: any[];
   token: string;
   storeToken: string;
-  price: number;
-  quantity: number;
+  price: number | string;
+  quantity: number | string;
+  formErrors: any;
 }
 
 class AddProduct extends React.Component<IProps, IState> {
@@ -64,12 +63,13 @@ class AddProduct extends React.Component<IProps, IState> {
     desc: "",
     images: [],
     name: "",
-    price: 1,
-    quantity: 1,
+    price: "",
+    quantity: "",
     suggestions: [],
     tags: [],
-    token: "",
+    token: "IOST",
     storeToken: "",
+    formErrors: null,
   };
 
   constructor(props) {
@@ -94,7 +94,7 @@ class AddProduct extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { tags, name, desc, suggestions, price, quantity, token, storeToken } = this.state;
+    const { tags, name, desc, suggestions, price, quantity, token, storeToken, formErrors } = this.state;
     const {
       t,
       i18n,
@@ -219,13 +219,32 @@ class AddProduct extends React.Component<IProps, IState> {
                   价格
                 </label>
                 <input
-                onChange={(evt) => { this.setState({ price: Number(evt.target.value.trim()) }); }}
-                value={price}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                onChange = {(evt) => {
+                  const value = Number(evt.target.value.trim());
+                  if (value < 0) {
+                    this.setState({
+                      formErrors: {
+                        price: "price must be greater than 0",
+                      },
+                    });
+                  } else {
+                    this.setState({
+                      formErrors: {
+                        ...formErrors,
+                        price: undefined,
+                      },
+                      price: value,
+                    });
+                  }
+                }}
+                className={classnames(formErrors?.price ? "border-red-500 border-2 focus:border-red-500" : "border-gray-200 border focus:border-gray-500", "appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white")}
                 type="number"
                 min="1"
-                step="100"
+                step="10"
                 placeholder="价格"/>
+                {price > 0 &&
+                <p className="text-gray-600 text-xs italic"> { price } {token} </p> }
+                { formErrors?.price && <p className="text-red-500 text-xs italic">{formErrors?.price}</p> }
               </div>
             </div>
             <div className="-mx-3 mb-4">
@@ -234,18 +253,41 @@ class AddProduct extends React.Component<IProps, IState> {
                   库存
                 </label>
                 <input
-                onChange={(evt) => { this.setState({ quantity: Number(evt.target.value.trim()) }); }}
-                value={quantity}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                onChange = {(evt) => {
+                  const value = Number(evt.target.value.trim());
+                  if (value <= 0) {
+                    this.setState({
+                      formErrors: {
+                        quantity: "quantity must be greater than 0",
+                      },
+                    });
+                  } else if (Math.round(value) !== value) {
+                    this.setState({
+                      formErrors: {
+                        quantity: "quantity must be Integer",
+                      },
+                    });
+                  } else {
+                    this.setState({
+                      formErrors: {
+                        ...formErrors,
+                        quantity: undefined,
+                      },
+                      quantity: value,
+                    });
+                  }
+                }}
+                className={classnames(formErrors?.quantity ? "border-red-500 border-2 focus:border-red-500" : "border-gray-200 border focus:border-gray-500", "appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white")}
                 type="number"
                 min="1"
                 step="1"
                 placeholder="库存"/>
+                { formErrors?.quantity && <p className="text-red-500 text-xs italic">{formErrors?.quantity}</p> }
               </div>
             </div>
             <div className="-mx-3 mt-8">
               <div className="w-full px-3">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              <button disabled={ !isEmpty(formErrors) } className={classnames(!isEmpty(formErrors) ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700", "bg-blue-500 text-white font-bold py-2 px-4 rounded")}
               onClick={(evt) => this.createProduct(evt)}>
                 创建兑换商品
               </button>
