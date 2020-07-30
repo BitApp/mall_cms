@@ -1,4 +1,4 @@
-import { faCheck, faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classnames from "classnames";
 import { WithTranslation } from "next-i18next";

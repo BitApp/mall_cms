@@ -1,7 +1,7 @@
 // import nextCookies from "next-cookies";
 import { faCheck, faPenSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import IOST from "iost";
+import classnames from "classnames";
 import { WithTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Router from "next/router";
@@ -12,6 +12,7 @@ import ReactTags from "react-tag-autocomplete";
 import { bindActionCreators, Dispatch } from "redux";
 import Tips from "../../../../components/Tips";
 import { withTranslation } from "../../../../i18n";
+
 import {
   closeAlert,
   setWallet,
@@ -20,7 +21,7 @@ import {
 } from "../../../../store/actions";
 import { getAxios } from "../../../../utils/axios";
 import { API_URL, CATEGORIES, CATEGORIES_MAP, STATUS, ACTIONS, SERVER_API_URL } from "../../../../utils/constant";
-import { chainErrorMessage } from "../../../../utils/helper";
+import { chainErrorMessage, isEmpty } from "../../../../utils/helper";
 const FrameLayout = dynamic(() => import("../../../../components/FrameLayout"), { ssr: false });
 
 import "../../../../styles/react-tags.scss";
@@ -50,8 +51,9 @@ interface IState {
   defaultImages: any[];
   token: string;
   storeToken: string;
-  price: number;
-  quantity: number;
+  price: number | string;
+  quantity: number | string;
+  formErrors: any;
 }
 
 class ModifyProduct extends React.Component<IProps, IState> {
@@ -71,22 +73,27 @@ class ModifyProduct extends React.Component<IProps, IState> {
       product: products[0],
     };
   }
+  public priceRef: React.RefObject<any>;
+  public quantityRef: React.RefObject<any>;
 
   public state: IState = {
     defaultImages: [],
     desc: "",
     images: [],
     name: "",
-    price: 1,
-    quantity: 1,
+    price: "",
+    quantity: "",
     suggestions: [],
     tags: [],
     token: "",
     storeToken: "",
+    formErrors: {},
   };
 
   constructor(props) {
     super(props);
+    this.priceRef = React.createRef();
+    this.quantityRef = React.createRef();
   }
 
   public async componentDidMount() {
@@ -114,10 +121,13 @@ class ModifyProduct extends React.Component<IProps, IState> {
       token: this.props.product.token,
       storeToken: res.data.data.symbol,
     });
+
+    this.priceRef.current.value = this.props.product.price;
+    this.quantityRef.current.value = this.props.product.quantity;
   }
 
   public render() {
-    const { tags, name, desc, suggestions, token, storeToken, images, price, quantity, defaultImages } = this.state;
+    const { tags, name, desc, suggestions, token, storeToken, defaultImages, formErrors } = this.state;
     const {
       t,
       i18n,
@@ -260,13 +270,34 @@ class ModifyProduct extends React.Component<IProps, IState> {
                   价格
                 </label>
                 <input
-                onChange={(evt) => { this.setState({ price: Number(evt.target.value.trim()) }); }}
-                value={price}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                ref={this.priceRef}
+                onChange = {(evt) => {
+                  const value = Number(evt.target.value.trim());
+                  if (value < 0) {
+                    this.setState({
+                      formErrors: {
+                        price: "price must be greater than 0",
+                      },
+                    });
+                  } else {
+                    if (formErrors?.price) {
+                      delete formErrors.price;
+                    }
+                    this.setState({
+                      formErrors: {
+                        ...formErrors,
+                      },
+                      price: value,
+                    });
+                  }
+                  return value;
+                }}
+                className={classnames(formErrors?.price ? "border-red-500 border-2 focus:border-red-500" : "border-gray-200 border focus:border-gray-500", "appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white")}
                 type="number"
                 min="1"
-                step="100"
+                step="10"
                 placeholder="价格"/>
+                { formErrors?.price && <p className="text-red-500 text-xs italic">{formErrors?.price}</p> }
               </div>
             </div>
             <div className="-mx-3 mb-4">
@@ -275,18 +306,44 @@ class ModifyProduct extends React.Component<IProps, IState> {
                   库存
                 </label>
                 <input
-                onChange={(evt) => { this.setState({ quantity: Number(evt.target.value.trim()) }); }}
-                value={quantity}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                ref={this.quantityRef}
+                onChange = {(evt) => {
+                  const value = Number(evt.target.value.trim());
+                  if (value <= 0) {
+                    this.setState({
+                      formErrors: {
+                        quantity: "quantity must be greater than 0",
+                      },
+                    });
+                  } else if (Math.round(value) !== value) {
+                    this.setState({
+                      formErrors: {
+                        quantity: "quantity must be Integer",
+                      },
+                    });
+                  } else {
+                    if (formErrors?.quantity) {
+                      delete formErrors.quantity;
+                    }
+                    this.setState({
+                      formErrors: {
+                        ...formErrors,
+                      },
+                      quantity: value,
+                    });
+                  }
+                }}
+                className={classnames(formErrors?.quantity ? "border-red-500 border-2 focus:border-red-500" : "border-gray-200 border focus:border-gray-500", "appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white")}
                 type="number"
                 min="1"
                 step="1"
                 placeholder="库存"/>
+                { formErrors?.quantity && <p className="text-red-500 text-xs italic">{formErrors?.quantity}</p> }
               </div>
             </div>
             <div className="-mx-3 mt-8">
               <div className="w-full px-3">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              <button disabled={ !isEmpty(formErrors) } className={classnames(!isEmpty(formErrors) ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700", "bg-blue-500 text-white font-bold py-2 px-4 rounded")}
               onClick={(evt) => this.updateProduct(evt)}>
                 保存商品
               </button>
