@@ -73,6 +73,7 @@ class Index extends React.Component<IProps> {
             <th className="px-4 py-2">店铺</th>
             <th className="px-4 py-2">封面</th>
             <th className="px-4 py-2">代币</th>
+            <th className="px-4 py-2">卖家信息</th>
             <th className="px-4 py-2">操作</th>
           </tr>
         </thead>
@@ -91,6 +92,14 @@ class Index extends React.Component<IProps> {
             <a onClick={() => { Router.push(`/manage/token`); }} className="text-blue-500 cursor-hand">
             { item.token[0] ? item.token[0].symbol : "" }
             </a>
+          </td>
+          <td className="border px-4 py-2 text-center">
+            <div className="m-auto text-left w-48">
+              <div><label className="mr-2">卖家:</label>{ item.seller }</div>
+              <div><label className="mr-2">卖家IOST账户:</label>{ item.sellerAccount }</div>
+              <div><label className="mr-2">卖家电话:</label>{ item.sellerMobile }</div>
+              <div><label className="mr-2">卖家微信:</label>{ item.sellerWechat }</div>
+            </div>
           </td>
           <td className="border px-4 py-2 text-center">
             <button className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"

@@ -87,6 +87,10 @@ class ModifyStore extends React.Component<IProps, IState> {
     this.setState({
       defaultImages: this.props.store.imgs,
       name: this.props.store.name,
+      seller: this.props.store.seller,
+      sellerWechat: this.props.store.sellerWechat,
+      sellerAccount: this.props.store.sellerAccount,
+      sellerMobile: this.props.store.sellerMobile,
     });
   }
 
@@ -207,7 +211,7 @@ class ModifyStore extends React.Component<IProps, IState> {
                 </label>
                 <input
                 onChange={(evt) => { this.setState({ sellerMobile: evt.target.value.trim() }); }}
-                value={ sellerMobile}
+                value={ sellerMobile }
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="卖家电话"/>
               </div>
             </div>
