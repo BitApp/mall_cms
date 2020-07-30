@@ -228,10 +228,12 @@ class AddProduct extends React.Component<IProps, IState> {
                       },
                     });
                   } else {
+                    if (formErrors?.price) {
+                      delete formErrors.price;
+                    }
                     this.setState({
                       formErrors: {
                         ...formErrors,
-                        price: undefined,
                       },
                       price: value,
                     });
@@ -268,10 +270,12 @@ class AddProduct extends React.Component<IProps, IState> {
                       },
                     });
                   } else {
+                    if (formErrors?.quantity) {
+                      delete formErrors.quantity;
+                    }
                     this.setState({
                       formErrors: {
                         ...formErrors,
-                        quantity: undefined,
                       },
                       quantity: value,
                     });

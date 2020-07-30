@@ -3,4 +3,9 @@ body {
   .custom-checkbox-lable input:checked + svg {
     display: block !important;
   }
+  .drag-wrapper {
+    right:0!important;
+  }
 }
+
+

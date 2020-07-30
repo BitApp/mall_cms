@@ -58,7 +58,9 @@ class Index extends React.Component<IProps> {
             <a className="ml-2 text-blue-500"
             target="_target" href={`https://www.iostabc.com/account/${wallet}`}>{wallet}</a>
           </div>
-          { wallet !== accountInfo.name && <p className="text-red-500 text-xs italic">请登录和当前账户名一致的IOST账户</p> }
+          { accountInfo.name &&
+          wallet !== accountInfo.name &&
+          <p className="text-red-500 text-xs italic">请登录和当前账户名一致的IOST账户</p> }
           {!accountInfo.name && <div className="mt-4">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={ () => Router.push("/auth/login") }>
