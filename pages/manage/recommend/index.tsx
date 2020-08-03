@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {WithTranslation} from "next-i18next";
 import Router from "next/router";
 import React from "react";
+import Modal from "react-modal";
 import classnames from "classnames";
 import {connect} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
@@ -16,7 +17,15 @@ import {
   showSuccessMessage,
 } from "../../../store/actions";
 import {getAxios} from "../../../utils/axios";
-import {ACTIONS, API_URL, CHAIN_URL, CONTRACT_ADDRESS, SERVER_API_URL, STATUS} from "../../../utils/constant";
+import {
+  ACTIONS,
+  API_URL,
+  CHAIN_URL,
+  CONTRACT_ADDRESS,
+  PRODUCT_STATUS,
+  SERVER_API_URL,
+  STATUS
+} from "../../../utils/constant";
 import {chainErrorMessage} from "../../../utils/helper";
 
 interface IProps extends WithTranslation {
@@ -36,6 +45,10 @@ interface IProps extends WithTranslation {
 
 interface IState {
   stores: any[];
+  setRecommendVisible: boolean,
+  startTime: number,
+  endTime: number,
+  currentStore: any
 }
 
 class Index extends React.Component<IProps> {
@@ -57,6 +70,10 @@ class Index extends React.Component<IProps> {
 
   public state: IState = {
     stores: [],
+    setRecommendVisible: false,
+    startTime: 0,
+    endTime: 0,
+    currentStore: null
   };
 
   constructor(props) {
@@ -114,13 +131,13 @@ class Index extends React.Component<IProps> {
               }}>
               {(item.recommend ? "取消" : "") + "推荐"}
             </button>
-            {!item.recommend ? <button
-              className={classnames("bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500")}
-              onClick={() => {
-                this.setRecommend(item);
-              }}>
+            {!item.recommend && <button className={
+              classnames("mb-2 bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500")
+            } onClick={
+              () => this.setState({setRecommendVisible: true, currentStore: item})
+            }>
               定时推荐
-            </button> : ""}
+            </button>}
           </td>
         </tr>;
       })
@@ -133,6 +150,65 @@ class Index extends React.Component<IProps> {
     return (
       <FrameLayout>
         <Tips/>
+        <Modal
+          isOpen={this.state.setRecommendVisible}
+          // onAfterOpen={afterOpenModal}
+          // onRequestClose={closeModal}
+          style={{
+            content: {
+              top: "30%",
+              left: "50%",
+              right: "auto",
+              bottom: "auto",
+              width: "300px",
+              marginRight: "-50%",
+              transform: "translate(-50%, -50%)",
+            },
+          }}
+          contentLabel="Example Modal"
+        >
+          <form>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                库存
+              </label>
+              <input
+                value={this.state.startTime}
+                onChange={
+                  (evt) => {
+                    this.setState({startTime: new Date(evt.target.value).getTime()});
+                  }
+                }
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="username" type="timestamp" min="0" placeholder="开始时间"/>
+              <input
+                value={this.state.endTime}
+                onChange={
+                  (evt) => {
+                    this.setState({endTime: new Date(evt.target.value).getTime()});
+                  }
+                }
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="username" type="timestamp" min="0" placeholder="结束时间"/>
+            </div>
+            <div className="flex items-center justify-between">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="button" onClick={
+                () => {
+                  this.setRecommend();
+                }
+              }>
+                修改
+              </button>
+              <a
+                className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
+                onClick={() => this.setState({setRecommendVisible: false})}>
+                取消
+              </a>
+            </div>
+          </form>
+        </Modal>
         <div className="p-6">
           {stores.length ? grid : emptyGrid}
         </div>
@@ -159,9 +235,10 @@ class Index extends React.Component<IProps> {
     this.setState({stores: res.data.data});
   }
 
-  public async setRecommend(item) {
+  public async setRecommend() {
     try {
-      const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}`);
+      const item = this.state.currentStore;
+      const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}?startTime=${this.state.startTime}&endTime=${this.state.endTime}`);
       if (result.data.code === STATUS.OK) {
         this.props.showSuccessMessage((item.recommend ? "取消" : "") + "推荐店铺成功");
         this.refresh();
