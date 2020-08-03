@@ -68,7 +68,7 @@ class AddProduct extends React.Component<IProps, IState> {
     suggestions: [],
     tags: [],
     token: "IOST",
-    storeToken: undefined,
+    storeToken: '',
     formErrors: null,
   };
 
@@ -90,7 +90,7 @@ class AddProduct extends React.Component<IProps, IState> {
       }
     }
     const res = await getAxios().get(`${ API_URL }/cms/account/token`);
-    this.setState({ suggestions, storeToken: res.data.data.symbol });
+    this.setState({ suggestions, storeToken: res.data.data && res.data.data.symbol ? res.data.data.symbol: '' });
   }
 
   public render() {
