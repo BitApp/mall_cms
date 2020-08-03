@@ -129,9 +129,10 @@ class Index extends React.Component<IProps> {
               onClick={() => {
                 this.recommend(item);
               }}>
-              {(item.recommend ? "取消" : "") + "推荐"}
+              {(item.recommend && (item.recommendEndTime = 0 || item.recommendEndTime > Date.now()) ? "取消" : "") + "推荐"}
             </button>
-            {!item.recommend && <button className={
+            {(!item.recommend || (item.recommendEndTime < Date.now() && item.recommendEndTime != 0)) &&
+            <button className={
               classnames("mb-2 bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500")
             } onClick={
               () => this.setState({setRecommendVisible: true, currentStore: item})
