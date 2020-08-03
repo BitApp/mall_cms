@@ -241,7 +241,7 @@ class Index extends React.Component<IProps> {
       const item = this.state.currentStore;
       const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}?startTime=${this.state.startTime}&endTime=${this.state.endTime}`);
       if (result.data.code === STATUS.OK) {
-        this.props.showSuccessMessage((item.recommend ? "取消" : "") + "推荐店铺成功");
+        this.props.showSuccessMessage((item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > Date.now()) ? "取消" : "") + "推荐店铺成功");
         this.setState({setRecommendVisible: false});
         this.refresh();
       } else {
@@ -256,7 +256,7 @@ class Index extends React.Component<IProps> {
     try {
       const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}`);
       if (result.data.code === STATUS.OK) {
-        this.props.showSuccessMessage((item.recommend ? "取消" : "") + "推荐店铺成功");
+        this.props.showSuccessMessage((item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > Date.now()) ? "取消" : "") + "推荐店铺成功");
         this.refresh();
       } else {
         this.props.showErrorMessage(result.data.msg);
