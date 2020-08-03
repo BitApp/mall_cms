@@ -103,7 +103,6 @@ class Index extends React.Component<IProps> {
       <tbody>
       {stores.map((item: any, index) => {
         const now = Date.now();
-        console.log(now, item.recommendStartTime, item.recommendEndTime)
         const recommend = item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > now);
         return <tr key={index}>
           <td className="border px-4 py-2 text-center">
@@ -134,7 +133,7 @@ class Index extends React.Component<IProps> {
             {item.recommend && item.recommendEndTime === 0 && "无限时"}
             {item.recommend && item.recommendStartTime > now && "距离开始:" &&
             <CountDownTimer
-              date={new Date(item.recommendStartTime)}
+              date={new Date(item.recommendStartTime).toUTCString()}
               days={{plural: 'Days ', singular: 'day '}}
               hours=':'
               mins=':'
@@ -142,7 +141,7 @@ class Index extends React.Component<IProps> {
             />}
             {item.recommend && item.recommendStartTime < now && item.recommendEndTime > now && '距离结束:' &&
             <CountDownTimer
-              date={new Date(item.recommendEndTime)}
+              date={new Date(item.recommendEndTime).toUTCString()}
               days={{plural: 'Days ', singular: 'day '}}
               hours=':'
               mins=':'
