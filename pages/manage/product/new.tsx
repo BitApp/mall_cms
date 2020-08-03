@@ -68,7 +68,7 @@ class AddProduct extends React.Component<IProps, IState> {
     suggestions: [],
     tags: [],
     token: "IOST",
-    storeToken: "",
+    storeToken: undefined,
     formErrors: null,
   };
 
