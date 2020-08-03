@@ -103,6 +103,7 @@ class Index extends React.Component<IProps> {
       <tbody>
       {stores.map((item: any, index) => {
         const now = Date.now();
+        console.log(now, item.recommendStartTime, item.recommendEndTime)
         const recommend = item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > now);
         return <tr key={index}>
           <td className="border px-4 py-2 text-center">
