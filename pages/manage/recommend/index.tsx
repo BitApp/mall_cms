@@ -10,6 +10,7 @@ import {bindActionCreators, Dispatch} from "redux";
 import FrameLayout from "../../../components/FrameLayout";
 import Tips from "../../../components/Tips";
 import {withTranslation} from "../../../i18n";
+import Countdown from 'react-cntdwn';
 import {
   closeAlert,
   setWallet,
@@ -17,7 +18,6 @@ import {
   showSuccessMessage,
 } from "../../../store/actions";
 import {getAxios} from "../../../utils/axios";
-import CountDownTimer from 'react_native_countdowntimer'
 
 import {
   ACTIONS,
@@ -132,22 +132,23 @@ class Index extends React.Component<IProps> {
             {/*{<Countdown date={Date.now() - item.recommendStartTime} controlled={true} />}*/}
             {item.recommend && item.recommendEndTime === 0 && "无限时"}
             {item.recommend && item.recommendStartTime > now && "距离开始:" &&
-            <CountDownTimer
-              date={new Date(item.recommendStartTime).toUTCString()}
-              days={{plural: 'Days ', singular: 'day '}}
-              hours=':'
-              mins=':'
-              segs=''
+            <Countdown
+              targetDate={new Date(item.recommendStartTime)}
+              startDelay={2000}
+              interval={1000}
+              timeSeparator={':'}
+              leadingZero
+              onFinished={()=>{}}
             />}
             {item.recommend && item.recommendStartTime < now && item.recommendEndTime > now && '距离结束:' &&
-            <CountDownTimer
-              date={new Date(item.recommendEndTime).toUTCString()}
-              days={{plural: 'Days ', singular: 'day '}}
-              hours=':'
-              mins=':'
-              segs=''
+            <Countdown
+              targetDate={new Date(item.recommendEndTime)}
+              startDelay={2000}
+              interval={1000}
+              timeSeparator={':'}
+              leadingZero
+              onFinished={()=>{}}
             />}
-            {/*{<Countdown total={10000} format={'mm:ss.iii'} ></Countdown>}*/}
           </td>
           <td className="border px-4 py-2 text-center">
             <button
