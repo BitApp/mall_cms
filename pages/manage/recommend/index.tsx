@@ -4,6 +4,7 @@ import {WithTranslation} from "next-i18next";
 import Router from "next/router";
 import React from "react";
 import Modal from "react-modal";
+import Countdown from 'react-countdown';
 import classnames from "classnames";
 import {connect} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
@@ -94,11 +95,14 @@ class Index extends React.Component<IProps> {
         <th className="px-4 py-2">封面</th>
         <th className="px-4 py-2">代币</th>
         <th className="px-4 py-2">推荐</th>
+        <th className="px-4 py-2">推荐计时</th>
         <th className="px-4 py-2">操作</th>
       </tr>
       </thead>
       <tbody>
       {stores.map((item: any, index) => {
+        const now = Date.now();
+        const recommend = item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > now);
         return <tr key={index}>
           <td className="border px-4 py-2 text-center">
             {item.name}
@@ -119,9 +123,14 @@ class Index extends React.Component<IProps> {
           </td>
           <td className="border px-4 py-2 text-green-500">
             <div className="text-center">
-              {item.recommend &&
+              {recommend &&
               <FontAwesomeIcon className="w-8 inline-block" icon={faCheckCircle}></FontAwesomeIcon>}
             </div>
+          </td>
+          <td className="border px-4 py-2 text-center">
+            {/*{<Countdown date={Date.now() - item.recommendStartTime} controlled={true} />}*/}
+            {item.recommend && item.recommendEndTime === 0 && '无限时'}
+            {/*{<Countdown total={10000} format={'mm:ss.iii'} ></Countdown>}*/}
           </td>
           <td className="border px-4 py-2 text-center">
             <button
@@ -129,7 +138,7 @@ class Index extends React.Component<IProps> {
               onClick={() => {
                 this.recommend(item);
               }}>
-              {(item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > Date.now()) ? "取消" : "") + "推荐"}
+              {(recommend ? "取消" : "") + "推荐"}
             </button>
             {(!item.recommend || (item.recommendEndTime < Date.now() && item.recommendEndTime !== 0)) &&
             <button className={
@@ -200,7 +209,7 @@ class Index extends React.Component<IProps> {
                   this.setRecommend();
                 }
               }>
-                修改
+                提交
               </button>
               <a
                 className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
