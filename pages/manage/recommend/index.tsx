@@ -173,23 +173,21 @@ class Index extends React.Component<IProps> {
                 库存
               </label>
               <input
-                value={this.state.startTime}
                 onChange={
                   (evt) => {
                     this.setState({startTime: new Date(evt.target.value).getTime()});
                   }
                 }
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="username" type="timestamp" min="0" placeholder="开始时间"/>
+                id="username" type="time" min="0" placeholder="开始时间"/>
               <input
-                value={this.state.endTime}
                 onChange={
                   (evt) => {
                     this.setState({endTime: new Date(evt.target.value).getTime()});
                   }
                 }
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="username" type="timestamp" min="0" placeholder="结束时间"/>
+                id="username" type="time" min="0" placeholder="结束时间"/>
             </div>
             <div className="flex items-center justify-between">
               <button
