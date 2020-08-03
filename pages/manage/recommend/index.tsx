@@ -278,6 +278,7 @@ class Index extends React.Component<IProps> {
         this.refresh();
       } else {
         this.props.showErrorMessage(result.data.msg);
+        this.setState({setRecommendVisible: false});
       }
     } catch (e) {
       this.props.showErrorMessage(e.message);
