@@ -11,7 +11,7 @@ const renderer = ({days, hours, minutes, seconds, completed}) => {
     return <Completionist endText={globalEndText}/>;
   } else {
     const countDownContent = <span>
-      {days}{t("day")}{hours}{t("hour")}{minutes}{t("minute")}{seconds}{t("second")}
+      {days}{"天"}{hours}{"时"}{minutes}{"分"}{seconds}{"秒"}
     </span>;
     // Render a countdown clientside only
     if (days <= 0 && hours <= 0) {
