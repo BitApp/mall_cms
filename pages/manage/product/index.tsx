@@ -299,7 +299,7 @@ class Index extends React.Component<IProps> {
           item.name,
           item.price.toString(),
           item.quantity.toString(),
-          item.token,
+          item.token.lower(),
         ],
       );
       tx.gasLimit = 300000;
