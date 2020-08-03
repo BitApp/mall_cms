@@ -1,14 +1,14 @@
 import Countdown from "react-countdown";
-import { useTranslation } from "../i18n";
+import {useTranslation} from "../i18n";
 
 // Random component
-const Completionist = ({ endText }) => <span className="text-gray-500">{ endText }</span>;
+const Completionist = ({endText}) => <span className="text-gray-500">{endText}</span>;
 let globalEndText = "Over";
 // Renderer callback with condition
-const renderer = ({ days, hours, minutes, seconds, completed, t }) => {
+const renderer = ({days, hours, minutes, seconds, completed}) => {
   if (completed) {
     // Render a completed state
-    return <Completionist endText={ globalEndText } />;
+    return <Completionist endText={globalEndText}/>;
   } else {
     const countDownContent = <span>
       {days}{t("day")}{hours}{t("hour")}{minutes}{t("minute")}{seconds}{t("second")}
@@ -25,13 +25,13 @@ const renderer = ({ days, hours, minutes, seconds, completed, t }) => {
     }
   }
 };
-const CountDown = ({ endTime, endText }) => {
-  const { t } = useTranslation("common");
+const CountDown = ({endTime, endText}) => {
+  const {t} = useTranslation("common");
   if (endText) { globalEndText = endText; }
   return (
-  <Countdown
-    date = { endTime }
-    renderer = { (context) => renderer(Object.assign({t}, context)) }
-  />);
+    <Countdown
+      date={endTime}
+      renderer={(context) => renderer(Object.assign(context))}
+    />);
 };
 export default CountDown;
