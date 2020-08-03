@@ -239,9 +239,10 @@ class Index extends React.Component<IProps> {
   public async setRecommend() {
     try {
       const item = this.state.currentStore;
-      const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}?startTime=${this.state.startTime}&endTime=${this.state.endTime}`);
+      const recommend = item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > Date.now());
+      const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}?recommend=${!recommend}&startTime=${this.state.startTime}&endTime=${this.state.endTime}`);
       if (result.data.code === STATUS.OK) {
-        this.props.showSuccessMessage((item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > Date.now()) ? "取消" : "") + "推荐店铺成功");
+        this.props.showSuccessMessage((recommend ? "取消" : "") + "推荐店铺成功");
         this.setState({setRecommendVisible: false});
         this.refresh();
       } else {
@@ -254,9 +255,10 @@ class Index extends React.Component<IProps> {
 
   public async recommend(item) {
     try {
-      const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}`);
+      const recommend = item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > Date.now());
+      const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}?recommend=${!recommend}`);
       if (result.data.code === STATUS.OK) {
-        this.props.showSuccessMessage((item.recommend && (item.recommendEndTime === 0 || item.recommendEndTime > Date.now()) ? "取消" : "") + "推荐店铺成功");
+        this.props.showSuccessMessage((recommend ? "取消" : "") + "推荐店铺成功");
         this.refresh();
       } else {
         this.props.showErrorMessage(result.data.msg);
