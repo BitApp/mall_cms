@@ -117,7 +117,7 @@ class Index extends React.Component<IProps> {
             {!item.recommend ? <button
               className={classnames("bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500")}
               onClick={() => {
-                this.recommend(item);
+                this.setRecommend(item);
               }}>
               定时推荐
             </button> : ""}
@@ -157,6 +157,20 @@ class Index extends React.Component<IProps> {
   public async refresh() {
     const res = await getAxios().get(`${ API_URL }/cms/recommends`);
     this.setState({stores: res.data.data});
+  }
+
+  public async setRecommend(item) {
+    try {
+      const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}`);
+      if (result.data.code === STATUS.OK) {
+        this.props.showSuccessMessage((item.recommend ? "取消" : "") + "推荐店铺成功");
+        this.refresh();
+      } else {
+        this.props.showErrorMessage(result.data.msg);
+      }
+    } catch (e) {
+      this.props.showErrorMessage(e.message);
+    }
   }
 
   public async recommend(item) {
