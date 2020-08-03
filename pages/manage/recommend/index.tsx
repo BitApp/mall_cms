@@ -241,7 +241,8 @@ class Index extends React.Component<IProps> {
       const result = await getAxios().get(`${API_URL}/cms/store/recommend/${item._id}?startTime=${this.state.startTime}&endTime=${this.state.endTime}`);
       if (result.data.code === STATUS.OK) {
         this.props.showSuccessMessage((item.recommend ? "取消" : "") + "推荐店铺成功");
-        this.refresh({setRecommendVisible: faCheckCircle});
+        this.setState({setRecommendVisible: false});
+        this.refresh();
       } else {
         this.props.showErrorMessage(result.data.msg);
       }
