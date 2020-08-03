@@ -7583,7 +7583,7 @@ react@^16.13.0:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
 
-react_native_countdowntimer@^1.0.5:
+react_native_countdowntimer@^1.0.2:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/react_native_countdowntimer/-/react_native_countdowntimer-1.0.5.tgz#e99cbc1b0beccfb693520e1a815df7d2b0e9d156"
   integrity sha1-6Zy8Gwvsz7aTUg4agV330rDp0VY=
