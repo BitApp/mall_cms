@@ -138,12 +138,19 @@ class Index extends React.Component<IProps> {
             {/*{<Countdown date={Date.now() - item.recommendStartTime} controlled={true} />}*/}
             {item.recommend && item.recommendEndTime === 0 && "无限时"}
             {
-              item.recommend && item.recommendStartTime > now && (<span>距离开始:</span> &&
-              <CountDownComponent endText={'推荐已开始'} endTime={item.recommendStartTime}/>)
+              item.recommend && item.recommendStartTime > now &&
+                <div>
+                  <span>距离开始:</span>
+                  <CountDownComponent endText={'推荐已开始'} endTime={item.recommendStartTime}/>
+                </div>
             }
             {
-              item.recommend && item.recommendStartTime < now && item.recommendEndTime > now && (<span>距离结束:</span> &&
-              <CountDownComponent endText={'推荐结束'} endTime={item.recommendEndTime}/>)
+              item.recommend && item.recommendStartTime < now && item.recommendEndTime > now &&
+              <div>
+                <span>距离结束:</span>
+                <CountDownComponent endText={'推荐结束'} endTime={item.recommendEndTime}/>
+              </div>
+
             }
 
           </td>
