@@ -9,7 +9,7 @@ import {bindActionCreators, Dispatch} from "redux";
 import Tips from "../../../components/Tips";
 import {withTranslation} from "../../../i18n";
 import {closeAlert, setWallet, showErrorMessage, showSuccessMessage,} from "../../../store/actions";
-import {ACCOUNT_STATUS, ACTIONS, API_URL, SERVER_API_URL} from "../../../utils/constant";
+import {ACCOUNT_STATUS, ACTIONS, API_URL, SERVER_API_URL, STATUS} from "../../../utils/constant";
 
 const FrameLayout = dynamic(() => import("../../../components/FrameLayout"), {ssr: false});
 
@@ -82,7 +82,7 @@ class Index extends React.Component<IProps> {
               type="button"
               onClick={
                 () => {
-                  this.forbidAgent();
+                  this.forbidAgent(item, true);
                 }
               }>
               禁用
@@ -92,22 +92,22 @@ class Index extends React.Component<IProps> {
               type="button"
               onClick={
                 () => {
-                  this.unForbidAgent();
+                  this.forbidAgent(item, false);
                 }
               }>
               取消禁用
             </button>}
-            { item.status !== ACCOUNT_STATUS.DELETED &&
-              <button
-                className="opacity-50 ml-4 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-                type="button"
-                onClick={
-                  () => {
-                    this.deleteAgent();
-                  }
-                }>
-                取消代理身份
-              </button>}
+            {item.status !== ACCOUNT_STATUS.DELETED &&
+            <button
+              className="opacity-50 ml-4 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+              type="button"
+              onClick={
+                () => {
+                  this.deleteAgent();
+                }
+              }>
+              取消代理身份
+            </button>}
           </td>
         </tr>;
       })
@@ -147,13 +147,29 @@ class Index extends React.Component<IProps> {
     }, 1000);
   }
 
-  public forbidAgent() {
-  }
-
-  public unForbidAgent() {
+  public async forbidAgent(item, forbid: boolean) {
+    if (forbid ? confirm("确定要禁用账户" + item.name + "吗?") : confirm("确定要取消禁用账户" + item.name + "吗?")) {
+      try {
+        const result = await getAxios().get(`${API_URL}/cms/account/forbidagentaccoun?forbid=${forbid}`);
+        if (result.data.code === STATUS.OK) {
+          alert(forbid ? "禁用用户" + item.name + "成功" : "取消禁用用户" + item.name + "成功");
+          await this.refresh();
+        } else {
+          this.props.showErrorMessage(result.data.msg);
+        }
+      } catch (e) {
+        this.props.showErrorMessage(e.message);
+      }
+    }
   }
 
   public deleteAgent() {
+    console.log('deleteAgent')
+  }
+
+  public async refresh() {
+    const res = await getAxios().get(`${ API_URL }/cms/account/agentaccount`);
+    this.setState({agentAccounts: res.data.data});
   }
 }
 
