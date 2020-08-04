@@ -150,7 +150,7 @@ class Index extends React.Component<IProps> {
   public async forbidAgent(item, forbid: boolean) {
     if (forbid ? confirm("确定要禁用账户" + item.name + "吗?") : confirm("确定要取消禁用账户" + item.name + "吗?")) {
       try {
-        const result = await getAxios().get(`${API_URL}/cms/account/forbidagentaccoun?agent=${item.name}forbid=${forbid}`);
+        const result = await getAxios().get(`${API_URL}/cms/account/forbidagentaccoun?agent=${item.name}&forbid=${forbid}`);
         if (result.data.code === STATUS.OK) {
           alert(forbid ? "禁用用户" + item.name + "成功" : "取消禁用用户" + item.name + "成功");
           await this.refresh();
