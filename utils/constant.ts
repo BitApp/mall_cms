@@ -60,6 +60,7 @@ export enum ACCOUNT_STATUS {
   OFFLINE = "OFFLINE",
   ONCHAIN = "ONCHAIN",
   DELETED = "DELETED",
+  FORBID = "FORBID"
 }
 
 export enum ACCOUNT_TYPE {
