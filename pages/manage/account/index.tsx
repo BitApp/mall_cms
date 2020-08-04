@@ -49,6 +49,11 @@ class Index extends React.Component<IProps> {
     };
   }
 
+  public state = {
+    agentAccounts: [],
+
+  };
+
   constructor(props) {
     super(props);
   }
