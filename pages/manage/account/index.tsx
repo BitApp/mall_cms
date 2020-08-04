@@ -63,7 +63,7 @@ class Index extends React.Component<IProps> {
   }
 
   public render() {
-    const {agentAccounts} = this.props;
+    const {agentAccounts} = this.state;
     const grid = <table className="table-auto w-full">
       <thead>
       <tr>
