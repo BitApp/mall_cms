@@ -152,7 +152,7 @@ class Index extends React.Component<IProps> {
       try {
         const result = await getAxios().get(`${API_URL}/cms/account/forbidagentaccoun?agent=${item.name}&forbid=${forbid ? 1 : 0}`);
         if (result.data.code === STATUS.OK) {
-          alert(forbid ? "禁用用户" + item.name + "成功" : "取消禁用用户" + item.name + "成功");
+          this.props.showSuccessMessage(forbid ? "禁用用户" + item.name + "成功" : "取消禁用用户" + item.name + "成功");
           this.refresh();
         } else {
           this.props.showErrorMessage(result.data.msg);
