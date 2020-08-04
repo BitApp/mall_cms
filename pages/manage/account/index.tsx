@@ -83,7 +83,7 @@ class Index extends React.Component<IProps> {
           </td>
           <td className="border px-4 py-2 text-center">
             {[ACCOUNT_STATUS.OFFLINE, ACCOUNT_STATUS.ONCHAIN].includes(item.status) && <button
-              className="bg-blue-500 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+              className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
               type="button"
               onClick={
                 () => {
@@ -93,7 +93,7 @@ class Index extends React.Component<IProps> {
               禁用
             </button>}
             {item.status === ACCOUNT_STATUS.FORBID && <button
-              className="bg-blue-500 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+              className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
               type="button"
               onClick={
                 () => {
@@ -104,7 +104,7 @@ class Index extends React.Component<IProps> {
             </button>}
             {item.status !== ACCOUNT_STATUS.DELETED &&
             <button
-              className="bg-blue-500 ml-4 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+              className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
               type="button"
               onClick={
                 () => {
