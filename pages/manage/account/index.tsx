@@ -50,8 +50,7 @@ class Index extends React.Component<IProps> {
   }
 
   public state = {
-    agentAccounts: [],
-
+    agentAccounts: []
   };
 
   constructor(props) {
@@ -60,6 +59,7 @@ class Index extends React.Component<IProps> {
 
   public componentDidMount() {
     this.initIwallet();
+    this.setState({agentAccounts: this.props.agentAccounts});
   }
 
   public render() {
