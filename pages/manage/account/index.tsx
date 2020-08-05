@@ -9,7 +9,9 @@ import {bindActionCreators, Dispatch} from "redux";
 import Tips from "../../../components/Tips";
 import {withTranslation} from "../../../i18n";
 import {closeAlert, setWallet, showErrorMessage, showSuccessMessage,} from "../../../store/actions";
-import {ACCOUNT_STATUS, ACTIONS, API_URL, SERVER_API_URL, STATUS} from "../../../utils/constant";
+import {ACCOUNT_STATUS, ACTIONS, API_URL, CONTRACT_ADDRESS, SERVER_API_URL, STATUS} from "../../../utils/constant";
+import {chainErrorMessage} from "../../../utils/helper";
+import IOST from "iost";
 
 const FrameLayout = dynamic(() => import("../../../components/FrameLayout"), {ssr: false});
 
@@ -108,7 +110,7 @@ class Index extends React.Component<IProps> {
               type="button"
               onClick={
                 () => {
-                  this.deleteAgent();
+                  this.deleteAgent(item);
                 }
               }>
               取消代理身份
@@ -168,8 +170,30 @@ class Index extends React.Component<IProps> {
     }
   }
 
-  public deleteAgent() {
-    console.log('deleteAgent')
+  public deleteAgent(item) {
+    if (confirm(`确定取消账户${item.name}代理身份吗`)) {
+      const win = window as any;
+      const iost = win.IWalletJS.newIOST(IOST);
+      // const { wallet, t } = this.props;
+      const that = this;
+      const tx = iost.callABI(
+        CONTRACT_ADDRESS,
+        "delStore",
+        [item.name]
+      );
+      tx.gasLimit = 300000;
+      // tx.addApprove("iost", price.toString());
+      iost.signAndSend(tx).on("pending", (trx) => {
+        console.info(trx);
+      })
+        .on("success", (result) => {
+          // 刷新数据
+          that.props.showSuccessMessage(item.name + "取消成功，请等待30左右刷新再次确认状态，请勿重复操作");
+        })
+        .on("failed", (failed) => {
+          that.props.showErrorMessage(chainErrorMessage(failed));
+        });
+    }
   }
 
   public async refresh() {
