@@ -131,7 +131,7 @@ class Index extends React.Component<IProps> {
               {item.repoBalance || 0}
               <button
                 className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
-                onClick={() => this.setState({showRecharge: false})}>
+                onClick={() => this.setState({showRecharge: true})}>
                 充值
               </button>
             </td>
