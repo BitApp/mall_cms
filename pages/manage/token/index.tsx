@@ -162,6 +162,18 @@ class Index extends React.Component<IProps> {
           contentLabel="Example Modal"
         >
           <form>
+            <div>
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                充值数量
+              </label>
+              <input
+                autoFocus
+                onChange={(evt) => { this.setState({ rechargeAmount: Number(evt.target.value) }); }}
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="text"
+                value={this.state.rechargeAmount}
+                placeholder="充值数量"/>
+            </div>
             <div className="flex items-center justify-between">
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
