@@ -145,7 +145,7 @@ class Index extends React.Component<IProps> {
       <FrameLayout>
         <Tips/>
         <Modal
-          isOpen={this.state.}
+          isOpen={this.state.showRecharge}
           // onAfterOpen={afterOpenModal}
           // onRequestClose={closeModal}
           style={{
