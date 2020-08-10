@@ -172,10 +172,15 @@ class Index extends React.Component<IProps> {
               <input
                 autoFocus
                 onChange={(evt) => {
-                  this.setState({rechargeAmount: Number(evt.target.value)});
+                  const tmp = evt.target.value;
+                  const value = tmp.replace(/[^1-9]{0,1}(\d*(?:\.\d{0,2})?).*$/g, '$1');
+                  this.setState({rechargeAmount: Number(value)});
                 }}
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
+                onInput={(evt) => {
+
+                }}
                 value={this.state.rechargeAmount}
                 placeholder="充值数量"/>
             </div>
