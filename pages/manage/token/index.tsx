@@ -258,12 +258,12 @@ class Index extends React.Component<IProps> {
       );
       tx.gasLimit = 300000;
       tx.addApprove("iost", this.state.rechargeAmount.toString());
+      this.setState({showRecharge: false});
       iost.signAndSend(tx).on("pending", (trx) => {
         console.info(trx);
       })
         .on("success", (result) => {
           // 刷新数据
-          this.setState({showRecharge: false});
           that.props.showSuccessMessage("充值成功，请等待30左右刷新再次确认状态");
 
         })
