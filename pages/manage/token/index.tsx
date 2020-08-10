@@ -2,6 +2,7 @@ import axios from "axios";
 import classnames from "classnames";
 import IOST from "iost";
 import cookies from "next-cookies";
+import Modal from "react-modal";
 import { WithTranslation } from "next-i18next";
 import Router from "next/router";
 import React from "react";
@@ -33,6 +34,13 @@ interface IProps extends WithTranslation {
   showErrorMessage: (message: string) => void;
   updateProducts: (products: [any]) => void;
   closeAlert: () => void;
+  showRecharge: boolean,
+  rechargeAmount: number
+}
+
+interface IState {
+  showRecharge: boolean,
+  rechargeAmount: number
 }
 
 class Index extends React.Component<IProps> {
@@ -55,6 +63,11 @@ class Index extends React.Component<IProps> {
   constructor(props) {
     super(props);
   }
+
+  public state: IState = {
+    showRecharge: false,
+    rechargeAmount: 0
+  };
 
   public componentDidMount() {
     this.initIwallet();
@@ -113,7 +126,12 @@ class Index extends React.Component<IProps> {
           {
             <td className="border px-4 py-2 text-center">
             { item.repoBalance || 0 }
-            <span className="ml-1 text-green-600">(可使用任何钱包给账户{wallet}转账)</span>
+              <button className="bg-transparent text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded ml-2 hover:border-transparent hover:text-white hover:bg-blue-500"
+                      onClick={ () => {
+                        Router.push(`/manage/token/modify/${item.symbol}`);
+                      } }>
+                充值
+              </button>
             </td>
           }
         </tr>; })
@@ -126,6 +144,42 @@ class Index extends React.Component<IProps> {
     return (
       <FrameLayout>
         <Tips/>
+        <Modal
+          isOpen={this.state.}
+          // onAfterOpen={afterOpenModal}
+          // onRequestClose={closeModal}
+          style={{
+            content: {
+              top: "30%",
+              left: "50%",
+              right: "auto",
+              bottom: "auto",
+              width: "300px",
+              marginRight: "-50%",
+              transform: "translate(-50%, -50%)",
+            },
+          }}
+          contentLabel="Example Modal"
+        >
+          <form>
+            <div className="flex items-center justify-between">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="button" onClick={
+                () => {
+                  this.rechargeRepoBalance();
+                }
+              }>
+                提交
+              </button>
+              <a
+                className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
+                onClick={() => this.setState({showRecharge: false})}>
+                取消
+              </a>
+            </div>
+          </form>
+        </Modal>
         <div className="p-6">
           <div className="p-2 bg-gray-200 rounded">
             <button className={ classnames("bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
@@ -165,6 +219,34 @@ class Index extends React.Component<IProps> {
         });
       }
     }, 1000);
+  }
+
+  public rechargeRepoBalance() {
+    if (confirm("确定要充值" + this.state.rechargeAmount + "个IOST吗?")) {
+      const win = window as any;
+      const iost = win.IWalletJS.newIOST(IOST);
+      // const { wallet, t } = this.props;
+      const that = this;
+      const tx = iost.callABI(
+        CONTRACT_ADDRESS,
+        "rechargeRepoBalance",
+        [
+          String(this.state.rechargeAmount)
+        ],
+      );
+      tx.gasLimit = 300000;
+      // tx.addApprove("iost", price.toString());
+      iost.signAndSend(tx).on("pending", (trx) => {
+        console.info(trx);
+      })
+        .on("success", (result) => {
+          // 刷新数据
+          that.props.showSuccessMessage("充值成功，请等待30左右刷新再次确认状态");
+        })
+        .on("failed", (failed) => {
+          that.props.showErrorMessage(chainErrorMessage(failed));
+        });
+    }
   }
 }
 
