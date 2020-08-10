@@ -263,8 +263,9 @@ class Index extends React.Component<IProps> {
       })
         .on("success", (result) => {
           // 刷新数据
+          this.setState({showRecharge: false});
           that.props.showSuccessMessage("充值成功，请等待30左右刷新再次确认状态");
-          Router.push(`/manage/token`);
+
         })
         .on("failed", (failed) => {
           that.props.showErrorMessage(chainErrorMessage(failed));
