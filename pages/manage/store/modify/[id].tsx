@@ -46,7 +46,7 @@ interface IState {
   images: any[];
   sellerWechat: string;
   seller: string;
-  sellerAccount: string;
+  desc: string;
   sellerMobile: string;
 }
 
@@ -74,7 +74,7 @@ class ModifyStore extends React.Component<IProps, IState> {
     name: "",
     seller: "",
     sellerWechat: "",
-    sellerAccount: "",
+    desc: "",
     sellerMobile: "",
   };
 
@@ -86,16 +86,16 @@ class ModifyStore extends React.Component<IProps, IState> {
     this.initIwallet();
     this.setState({
       defaultImages: this.props.store.imgs,
+      desc: this.props.store.desc,
       name: this.props.store.name,
       seller: this.props.store.seller,
       sellerWechat: this.props.store.sellerWechat,
-      sellerAccount: this.props.store.sellerAccount,
       sellerMobile: this.props.store.sellerMobile,
     });
   }
 
   public render() {
-    const { name, images, defaultImages, seller, sellerAccount, sellerMobile, sellerWechat } = this.state;
+    const { name, images, defaultImages, seller, desc, sellerMobile, sellerWechat } = this.state;
     const {
       t,
       i18n,
@@ -129,6 +129,17 @@ class ModifyStore extends React.Component<IProps, IState> {
                   店铺名称
                 </label>
                 <input onChange={(evt) => { this.setState({ name: evt.target.value.trim() }); }} value={name} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="商品名称"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  店铺简介
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ desc: evt.target.value.trim() }); }}
+                value={ desc }
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="店铺简介"/>
               </div>
             </div>
             <div className="-mx-3 mb-4">
@@ -218,17 +229,6 @@ class ModifyStore extends React.Component<IProps, IState> {
             <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  卖家IOST账户
-                </label>
-                <input
-                onChange={(evt) => { this.setState({ sellerAccount: evt.target.value.trim() }); }}
-                value={ sellerAccount}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="IOST账户"/>
-              </div>
-            </div>
-            <div className="-mx-3 mb-4">
-              <div className="w-full px-3">
-                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   卖家微信
                 </label>
                 <input
@@ -257,10 +257,10 @@ class ModifyStore extends React.Component<IProps, IState> {
       (this.state.images.length || this.state.defaultImages.length)) {
         try {
           const result = await getAxios().post(`${API_URL}/cms/store/modify/${this.props.id}`, {
+            desc: this.state.desc,
             imgs: this.state.images,
             name: this.state.name,
             seller: this.state.seller,
-            sellerAccount: this.state.sellerAccount,
             sellerMobile: this.state.sellerMobile,
             sellerWechat: this.state.sellerWechat,
           });

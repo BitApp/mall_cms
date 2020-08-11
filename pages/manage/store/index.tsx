@@ -71,6 +71,7 @@ class Index extends React.Component<IProps> {
         <thead>
           <tr>
             <th className="px-4 py-2">店铺</th>
+            <th className="px-4 py-2">简介</th>
             <th className="px-4 py-2">封面</th>
             <th className="px-4 py-2">代币</th>
             <th className="px-4 py-2">卖家信息</th>
@@ -84,6 +85,9 @@ class Index extends React.Component<IProps> {
             { item.name }
           </td>
           <td className="border px-4 py-2 text-center">
+            { item.desc }
+          </td>
+          <td className="border px-4 py-2 text-center">
           { item.imgs.map((it, id) => (
             <img className="mr-1" width="80" key={id} src={it}/>
           )) }
@@ -95,10 +99,9 @@ class Index extends React.Component<IProps> {
           </td>
           <td className="border px-4 py-2 text-center">
             <div className="m-auto text-left w-48">
-              <div><label className="mr-2">卖家:</label>{ item.seller }</div>
-              <div><label className="mr-2">卖家IOST账户:</label>{ item.sellerAccount }</div>
-              <div><label className="mr-2">卖家电话:</label>{ item.sellerMobile }</div>
-              <div><label className="mr-2">卖家微信:</label>{ item.sellerWechat }</div>
+              <div><label className="mr-2 text-gray-600">卖家:</label>{ item.seller }</div>
+              <div><label className="mr-2 text-gray-600">卖家电话:</label>{ item.sellerMobile }</div>
+              <div><label className="mr-2 text-gray-600">卖家微信:</label>{ item.sellerWechat }</div>
             </div>
           </td>
           <td className="border px-4 py-2 text-center">

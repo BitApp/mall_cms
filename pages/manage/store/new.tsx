@@ -43,7 +43,7 @@ interface IState {
   images: string[];
   sellerWechat: string;
   seller: string;
-  sellerAccount: string;
+  desc: string;
   sellerMobile: string;
 }
 
@@ -59,7 +59,7 @@ class AddStore extends React.Component<IProps, IState> {
     name: "",
     seller: "",
     sellerWechat: "",
-    sellerAccount: "",
+    desc: "",
     sellerMobile: "",
   };
 
@@ -72,7 +72,7 @@ class AddStore extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { name, seller, sellerAccount, sellerMobile, sellerWechat } = this.state;
+    const { name, seller, desc, sellerMobile, sellerWechat } = this.state;
     const {
       t,
       i18n,
@@ -111,6 +111,17 @@ class AddStore extends React.Component<IProps, IState> {
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
                 placeholder="商品名称"/>
+              </div>
+            </div>
+            <div className="-mx-3 mb-4">
+              <div className="w-full px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  店铺简介
+                </label>
+                <input
+                onChange={(evt) => { this.setState({ desc: evt.target.value.trim() }); }}
+                value={ desc }
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="店铺简介"/>
               </div>
             </div>
             <div className="-mx-3 mb-4">
@@ -177,17 +188,6 @@ class AddStore extends React.Component<IProps, IState> {
             <div className="-mx-3 mb-4">
               <div className="w-full px-3">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  卖家IOST账户
-                </label>
-                <input
-                onChange={(evt) => { this.setState({ sellerAccount: evt.target.value.trim() }); }}
-                value={ sellerAccount}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="IOST账户"/>
-              </div>
-            </div>
-            <div className="-mx-3 mb-4">
-              <div className="w-full px-3">
-                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   卖家微信
                 </label>
                 <input
@@ -217,10 +217,10 @@ class AddStore extends React.Component<IProps, IState> {
       if (confirm("确定创建店铺?")) {
         try {
           const result = await getAxios().post(`${API_URL}/cms/store/add`, {
+            desc: this.state.desc,
             imgs: this.state.images,
             name: this.state.name,
             seller: this.state.seller,
-            sellerAccount: this.state.sellerAccount,
             sellerMobile: this.state.sellerMobile,
             sellerWechat: this.state.sellerWechat,
           });
