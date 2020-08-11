@@ -137,7 +137,8 @@ class ModifyStore extends React.Component<IProps, IState> {
                   店铺简介
                 </label>
                 <input
-                onChange={(evt) => { this.setState({ desc: evt.target.value.trim() }); }}
+                onChange={(evt) => { this.setState({ desc: evt.target.value.replace(/^\s+/,"") }); }}
+                onBlur={(evt) => {this.setState({ desc: evt.target.value.trim() }); }}
                 value={ desc }
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" placeholder="店铺简介"/>
               </div>
