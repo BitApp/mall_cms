@@ -346,7 +346,7 @@ class Index extends React.Component<IProps> {
   }
 
   public async deleteItem(item) {
-    if (confirm("确定下架" + item.name + "吗?")) {
+    if (confirm("下架后商品将被删除且不可恢复，确定下架" + item.name + "吗?")) {
       try {
         const result = await getAxios().get(`${API_URL}/cms/product/delete/${item._id}`);
         if (result.data.code === STATUS.OK) {

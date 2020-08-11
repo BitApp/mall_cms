@@ -20,7 +20,9 @@ interface IProps extends WithTranslation {
 
 class FrameLayout extends React.Component<IProps> {
   public componentDidMount() {
-    this.props.updatePath(location.pathname);
+    if (location) {
+      this.props.updatePath(location.pathname);
+    }
   }
 
   public render() {
@@ -41,12 +43,12 @@ class FrameLayout extends React.Component<IProps> {
                 <div className="md:mt-12 md:w-48 md:fixed md:left-0 md:top-0 content-center md:content-start text-left justify-between">
                     <ul className="list-reset flex flex-row md:flex-col py-0 md:py-3 px-1 md:px-2 text-center md:text-left">
                         <li className="mr-3 flex-1">
-                            <Link href="/">
-                              <a className={`block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-white ${ path === "/" ? "border-white" : ""}`}>
-                                <i className="fa fa-envelope pr-0 md:pr-3"></i><span className="pb-1 md:pb-0 text-xs md:text-base text-gray-600 md:text-gray-400 block md:inline-block">首页</span>
-                              </a>
-                            </Link>
-                          </li>
+                          <Link href="/">
+                            <a className={`block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-white ${ path === "/" ? "border-white" : ""}`}>
+                              <i className="fa fa-envelope pr-0 md:pr-3"></i><span className="pb-1 md:pb-0 text-xs md:text-base text-gray-600 md:text-gray-400 block md:inline-block">首页</span>
+                            </a>
+                          </Link>
+                        </li>
                         { cookies.get("type") ===  ACCOUNT_TYPE.ROOT && <li className="mr-3 flex-1">
                           <Link href="/manage/account">
                             <a className={`block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-pink-500 ${ path === "/manage/account" ? "border-pink-500" : ""}`}>

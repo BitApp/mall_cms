@@ -377,7 +377,7 @@ class ModifyProduct extends React.Component<IProps, IState> {
           const result = await getAxios().post(`${API_URL}/cms/product/modify/${this.props.id}`, {
             desc: this.state.desc,
             imgs: this.state.images,
-            token: this.state.token,
+            token: this.state.token.toLowerCase(),
             name: this.state.name,
             price: this.state.price,
             quantity: this.state.quantity,
