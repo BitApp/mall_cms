@@ -209,6 +209,7 @@ class ModifyProduct extends React.Component<IProps, IState> {
                       <button
                       className="ml-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
                       onClick={(e) => { e.preventDefault(); onImageRemoveAll(e); }}>删除图片</button>
+                      <div><span className="text-xs text-gray-800">推荐尺寸: 123*456</span></div>
                       {imageList.map((image) => (
                         <div key={image.key} className="image-item mt-4">
                           <img src={image.dataURL} alt="" width="100" />
